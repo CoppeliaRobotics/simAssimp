@@ -22,7 +22,7 @@ include_directories(${VREP_INCLUDE}/../include/stack)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/generated)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${ASSIMP_INCLUDE_DIRS})
+include_directories(BEFORE ${ASSIMP_INCLUDE_DIRS})
 
 vrep_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simExtAssimp.lua)
 
