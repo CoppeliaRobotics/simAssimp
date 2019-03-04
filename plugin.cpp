@@ -263,7 +263,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                     ca[1]=0.499f;
                     ca[2]=0.499f;
                 }
-                float cad[3]={ca[0]*0.5f+cd[0]*0.5f,ca[1]*0.5f+cd[1]*0.5f,ca[2]*0.5f+cd[2]*0.5f};
+                float cad[3]={std::max<float>(ca[0],cd[0]),std::max<float>(ca[1],cd[1]),std::max<float>(ca[2],cd[2])};
                 simSetShapeColor(h,"",sim_colorcomponent_ambient_diffuse,cad);
                 simSetShapeColor(h,"",sim_colorcomponent_specular,cs);
                 simSetShapeColor(h,"",sim_colorcomponent_emission,ce);

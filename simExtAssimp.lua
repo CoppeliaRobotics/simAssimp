@@ -178,7 +178,6 @@ function simAssimp.exportShapesDlg(filename,shapeHandles)
         if string.find(fn,'.ply') then fformat='plyb' end
         if string.find(fn,'.stl') then fformat='stlb' end
         if string.find(fn,'.dae') then fformat='collada' end
-        if string.find(fn,'.stp') then fformat='stp' end
         if fformat~='' then
             local xml = [[
             <ui title="Exporting..." closeable="true" resizable="false" activate="false" modal="true">
