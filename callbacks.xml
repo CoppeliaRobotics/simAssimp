@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml-stylesheet type="text/xsl" href="callbacks.xsl"?>
+
+<plugin name="Assimp" short-name="Assimp" author="marc@coppeliarobotics.com">
+
+    <description>Plugin for importing CAD files in V-REP</description>
+
+    <enum name="upVector" item-prefix="upvect_" base="0">
+        <item name="auto">
+            <description>The up vector is automatically picked</description>
+        </item>
+        <item name="z">
+            <description>The up vector is along the file's Z-coordinate</description>
+        </item>
+        <item name="y">
+            <description>The up vector is along the file's Y-coordinate</description>
+        </item>
+    </enum>
+
+    <command name="importShapes">
+        <description>Imports the specified files as shapes</description>
+        <params>
+            <param name="filenames" type="string">
+                <description>The filenames (semicolon-separated), including their extensions</description>
+            </param>
+            <param name="maxTextureSize" type="int" item-type="int" minsize="8" maxsize="2048" default="512">
+                <description>The desired maximum texture size (textures will be scaled)</description>
+            </param>
+            <param name="scaling" type="float" item-type="float" minsize="0.0" maxsize="1000.0" default="0.0">
+                <description>The desired mesh scaling. 0.0 for automatic scaling</description>
+            </param>
+            <param name="upVector" type="int" default="sim_assimp_upvect_auto">
+                <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
+            </param>
+            <param name="options" type="int" default="0">
+                <description>Import flags (1=drop textures, 2=ignore colors, 4=ignore transparency, 8=do not optimize meshes, 16=keep identical vertices, 32=generate one shape per file, 64=shapes have aligned orientations)</description>
+            </param>
+        </params>
+        <return>
+            <param name="shapeHandles" type="table" item-type="int">
+                <description>Handles of imported shapes</description>
+            </param>
+        </return>
+    </command>
+
+    <command name="exportShapes">
+        <description>Exports the specified shapes. Depending on the fileformat, several files will be created (e.g. myFile.obj, myFile.mtl, myFile_2180010.png, etc.)</description>
+        <params>
+            <param name="shapeHandles" type="table" item-type="int">
+                <description>The handles of the shapes to export</description>
+            </param>
+            <param name="filename" type="string">
+                <description>The filename including its extension</description>
+            </param>
+            <param name="formatId" type="string">
+                <description>see simAssimp.getExportFormat</description>
+            </param>
+            <param name="scaling" type="float" item-type="float" minsize="0.001" maxsize="1000.0" default="1.0">
+                <description>The desired mesh scaling.</description>
+            </param>
+            <param name="upVector" type="int" default="sim_assimp_upvect_z">
+                <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
+            </param>
+            <param name="options" type="int" default="0">
+                <description>Export flags (1=drop textures, 2=ignore colors)</description>
+            </param>
+        </params>
+    </command>
+
+    <command name="getImportFormat">
+        <description>Allows to loop through supported file formats for import</description>
+        <params>
+            <param name="index" type="int">
+                <description>Zero-based index</description>
+            </param>
+        </params>
+        <return>
+            <param name="formatDescription" type="string">
+                <description>The description of the file format at the specified index, or an empty string</description>
+            </param>
+            <param name="formatExtension" type="string">
+                <description>The file extension of the file format at the specified index, or an empty string</description>
+            </param>
+        </return>
+    </command>
+
+    <command name="getExportFormat">
+        <description>Allows to loop through supported file formats for export</description>
+        <params>
+            <param name="index" type="int">
+                <description>Zero-based index</description>
+            </param>
+        </params>
+        <return>
+            <param name="formatDescription" type="string">
+                <description>The description of the file format at the specified index, or an empty string</description>
+            </param>
+            <param name="formatExtension" type="string">
+                <description>The file extension of the file format at the specified index, or an empty string</description>
+            </param>
+            <param name="formatId" type="string">
+                <description>The file format ID at the specified index (needed when exporting), or an empty string</description>
+            </param>
+        </return>
+    </command>
+    
+    <command name="importMeshes">
+        <description>Imports the specified files as mesh data</description>
+        <params>
+            <param name="filenames" type="string">
+                <description>The filenames (semicolon-separated), including their extensions</description>
+            </param>
+            <param name="scaling" type="float" item-type="float" minsize="0.0" maxsize="1000.0" default="0.0">
+                <description>The desired mesh scaling. 0.0 for automatic scaling</description>
+            </param>
+            <param name="upVector" type="int" default="sim_assimp_upvect_auto">
+                <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
+            </param>
+            <param name="options" type="int" default="0">
+                <description>Import flags (8=do not optimize meshes, 16=keep inditical vertices, 32=one mesh per file)</description>
+            </param>
+        </params>
+        <return>
+            <param name="allVertices" type="table" item-type="float-table" skip="true">
+                <description>A table containing tables of vertices (one table entry per mesh)</description>
+            </param>
+            <param name="allIndices" type="table" item-type="int-table" skip="true">
+                <description>A table containing tables of indices (one table entry per mesh)</description>
+            </param>
+        </return>
+    </command>
+
+    <command name="exportMeshes">
+        <description>Exports the specified mesh data.</description>
+        <params>
+            <param name="allVertices" type="table" item-type="float-table" skip="true">
+                <description>A table containing tables of vertices (one table entry per mesh)</description>
+            </param>
+            <param name="allIndices" type="table" item-type="int-table" skip="true">
+                <description>A table containing tables of indices (one table entry per mesh)</description>
+            </param>
+            <param name="filename" type="string" skip="true">
+                <description>The filename including its extension</description>
+            </param>
+            <param name="formatId" type="string" skip="true">
+                <description>see simAssimp.getExportFormat</description>
+            </param>
+            <param name="scaling" type="float" item-type="float" minsize="0.001" maxsize="1000.0" default="1.0" skip="true">
+                <description>The desired mesh scaling.</description>
+            </param>
+            <param name="upVector" type="int" default="sim_assimp_upvect_z" skip="true">
+                <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
+            </param>
+            <param name="options" type="int" default="0" skip="true">
+                <description>Export flags (keep at zero for now)</description>
+            </param>
+        </params>
+    </command>
+
+    
+</plugin>
