@@ -218,7 +218,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                         {
                             if ( (res[0]>maxTextures)||(res[1]>maxTextures) )
                             {
-                                int resOut[2]={std::min<float>(maxTextures,res[0]),std::min<float>(maxTextures,res[1])};
+                                int resOut[2]={std::min<int>(maxTextures,res[0]),std::min<int>(maxTextures,res[1])};
                                 unsigned char* imgOut=simGetScaledImage(img,res,resOut,1+2,NULL);
                                 if (deleteTexture)
                                     simReleaseBuffer((char*)img);
