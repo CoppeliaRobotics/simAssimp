@@ -26,6 +26,8 @@ function simAssimp.importShapesDlg(filenames)
         simAssimp.importShapes(configUiData.filenames,configUiData.maxRes,scaling,configUiData.upVector,options)
         configUiData=nil
         simUI.destroy(waitUi)
+        print("done.")
+        sim.announceSceneContentChange()
     end
 
 
@@ -193,9 +195,11 @@ function simAssimp.exportShapesDlg(filename,shapeHandles)
             simAssimp.exportShapes(shapeHandles,filename,fformat,scaling,configUiData.upVector+1,options)
             configUiData=nil
             simUI.destroy(waitUi)
+            print("done.")
         else
             print("simAssimp.exportShapesDlg: Unsupported file format.")
         end
+        sim.removeObjectFromSelection(sim.handle_all,-1)
     end
 
 
