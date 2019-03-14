@@ -10,6 +10,8 @@
 #include <assimp/Exporter.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/matrix4x4.h>
+#include <assimp/vector3.h>
 #include "v_repPlusPlus/Plugin.h"
 #include "plugin.h"
 #include "stubs.h"
@@ -66,6 +68,24 @@ void getExportFormat(SScriptCallBack *p, const char *cmd, getExportFormat_in *in
         simPopStackItem(p->stackID,simGetStackSize(p->stackID));
 }
 
+const aiMatrix4x4* getTransform(aiNode* node,const aiMatrix4x4* tr,int meshIndex)
+{
+    for (size_t i=0;i<node->mNumMeshes;i++)
+    {
+        if (node->mMeshes[i]==meshIndex)
+            return(tr);
+    }
+    for (size_t i=0;i<node->mNumChildren;i++)
+    {
+        aiNode* childNode=node->mChildren[i];
+        aiMatrix4x4 tr2=tr[0]*childNode->mTransformation;
+        const aiMatrix4x4* m=getTransform(childNode,&tr2,meshIndex);
+        if (m!=nullptr)
+            return(m);
+    }
+    return(nullptr);
+}
+
 void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int upVector,int options,std::vector<int>& shapeHandles)
 {
     std::vector<std::string> filenames;
@@ -96,9 +116,21 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
             float minMaxZ[2]={9999999.0f,-9999999.0f};
             for (size_t i=0;i<scene->mNumMeshes;i++)
             {
+                const aiMatrix4x4* tr=getTransform(scene->mRootNode,&scene->mRootNode->mTransformation,i);
+                /*
+                if (tr!=nullptr)
+                {
+                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.a1,scene->mRootNode->mTransformation.a2,scene->mRootNode->mTransformation.a3,scene->mRootNode->mTransformation.a4);
+                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.b1,scene->mRootNode->mTransformation.b2,scene->mRootNode->mTransformation.b3,scene->mRootNode->mTransformation.b4);
+                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.c1,scene->mRootNode->mTransformation.c2,scene->mRootNode->mTransformation.c3,scene->mRootNode->mTransformation.c4);
+                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.d1,scene->mRootNode->mTransformation.d2,scene->mRootNode->mTransformation.d3,scene->mRootNode->mTransformation.d4);
+                }
+                */
                 const aiMesh* mesh = scene->mMeshes[i];
                 for (size_t j=0;j<mesh->mNumVertices;j++)
                 {
+                    if (tr!=nullptr)
+                        mesh->mVertices[j]*=tr[0];
                     if (mesh->mVertices[j].x<minMaxX[0])
                         minMaxX[0]=mesh->mVertices[j].x;
                     if (mesh->mVertices[j].x>minMaxX[1])
@@ -287,18 +319,15 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
             }
             allTransformedTextures.clear();
         }
-        if ((options&32)!=0)
+        if ( ((options&32)!=0)&&(shapeHandlesForThisFile.size()>1) )
         {
-            if (shapeHandlesForThisFile.size()>0)
-            {
-                int s=1;
-                if (!hasMaterials)
-                    s=-1;
-                int h=simGroupShapes(&shapeHandlesForThisFile[0],s*int(shapeHandlesForThisFile.size()));
-                shapeHandles.push_back(h);
-                if ((options&64)!=0)
-                    simReorientShapeBoundingBox(h,-1,0);
-            }
+            int s=1;
+            if (!hasMaterials)
+                s=-1;
+            int h=simGroupShapes(&shapeHandlesForThisFile[0],s*int(shapeHandlesForThisFile.size()));
+            shapeHandles.push_back(h);
+            if ((options&64)!=0)
+                simReorientShapeBoundingBox(h,-1,0);
         }
         else
             shapeHandles.insert(shapeHandles.end(),shapeHandlesForThisFile.begin(),shapeHandlesForThisFile.end());
@@ -598,9 +627,12 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
             float minMaxZ[2]={9999999.0f,-9999999.0f};
             for (size_t i=0;i<scene->mNumMeshes;i++)
             {
+                const aiMatrix4x4* tr=getTransform(scene->mRootNode,&scene->mRootNode->mTransformation,i);
                 const aiMesh* mesh = scene->mMeshes[i];
                 for (size_t j=0;j<mesh->mNumVertices;j++)
                 {
+                    if (tr!=nullptr)
+                        mesh->mVertices[j]*=tr[0];
                     if (mesh->mVertices[j].x<minMaxX[0])
                         minMaxX[0]=mesh->mVertices[j].x;
                     if (mesh->mVertices[j].x>minMaxX[1])
