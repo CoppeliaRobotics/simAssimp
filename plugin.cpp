@@ -102,12 +102,16 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                 aiProcess_SortByPType|aiProcess_RemoveComponent|aiProcess_DropNormals|
                 aiProcess_RemoveRedundantMaterials|aiProcess_FindDegenerates|aiProcess_FindInvalidData|
                 aiProcess_GenUVCoords|aiProcess_TransformUVCoords|aiProcess_EmbedTextures;
+
         if ((options&32)!=0)
             options=(options|24)-24;
         if ((options&8)==0)
             flags|=aiProcess_OptimizeMeshes;
         if ((options&16)==0)
             flags|=aiProcess_JoinIdenticalVertices;
+
+        if ((options&128)!=0)
+            importer.SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION,1);
         const aiScene* scene = importer.ReadFile(filenames[wi].c_str(),flags);
         if(scene)
         {
@@ -117,15 +121,6 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
             for (size_t i=0;i<scene->mNumMeshes;i++)
             {
                 const aiMatrix4x4* tr=getTransform(scene->mRootNode,&scene->mRootNode->mTransformation,i);
-                /*
-                if (tr!=nullptr)
-                {
-                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.a1,scene->mRootNode->mTransformation.a2,scene->mRootNode->mTransformation.a3,scene->mRootNode->mTransformation.a4);
-                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.b1,scene->mRootNode->mTransformation.b2,scene->mRootNode->mTransformation.b3,scene->mRootNode->mTransformation.b4);
-                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.c1,scene->mRootNode->mTransformation.c2,scene->mRootNode->mTransformation.c3,scene->mRootNode->mTransformation.c4);
-                    printf("%f, %f, %f, %f\n",scene->mRootNode->mTransformation.d1,scene->mRootNode->mTransformation.d2,scene->mRootNode->mTransformation.d3,scene->mRootNode->mTransformation.d4);
-                }
-                */
                 const aiMesh* mesh = scene->mMeshes[i];
                 for (size_t j=0;j<mesh->mNumVertices;j++)
                 {
@@ -190,8 +185,8 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                     }
                     else
                     {
-                        vertices.push_back(mesh->mVertices[j].z*scaling);
                         vertices.push_back(mesh->mVertices[j].x*scaling);
+                        vertices.push_back(-mesh->mVertices[j].z*scaling);
                         vertices.push_back(mesh->mVertices[j].y*scaling);
                     }
                 }
@@ -409,9 +404,9 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
                 }
                 else
                 {
-                    s.vertices[3*i+2]=v(0)*scaling;
-                    s.vertices[3*i+0]=v(1)*scaling;
+                    s.vertices[3*i+0]=v(0)*scaling;
                     s.vertices[3*i+1]=v(2)*scaling;
+                    s.vertices[3*i+2]=-v(1)*scaling;
                 }
             }
             s.indices=shapeInfo.indices;
@@ -619,6 +614,8 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
             flags|=aiProcess_OptimizeMeshes;
         if ((options&16)==0)
             flags|=aiProcess_JoinIdenticalVertices;
+        if ((options&128)!=0)
+            importer.SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION,1);
         const aiScene* scene = importer.ReadFile(filenames[wi].c_str(),flags);
         if(scene)
         {
@@ -684,8 +681,8 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
                     }
                     else
                     {
-                        vertices.push_back(mesh->mVertices[j].z*scaling);
                         vertices.push_back(mesh->mVertices[j].x*scaling);
+                        vertices.push_back(-mesh->mVertices[j].z*scaling);
                         vertices.push_back(mesh->mVertices[j].y*scaling);
                     }
                 }

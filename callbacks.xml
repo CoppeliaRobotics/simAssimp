@@ -33,7 +33,7 @@
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0">
-                <description>Import flags (1=drop textures, 2=ignore colors, 4=ignore transparency, 8=do not optimize meshes, 16=keep identical vertices, 32=generate one shape per file, 64=shapes have aligned orientations)</description>
+                <description>Import flags (1=drop textures, 2=ignore colors, 4=ignore transparency, 8=do not optimize meshes, 16=keep identical vertices, 32=generate one shape per file, 64=shapes have aligned orientations, 128=ignore up vector coded in fileformat (e.g. Collada))</description>
             </param>
         </params>
         <return>
@@ -117,7 +117,7 @@
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0">
-                <description>Import flags (8=do not optimize meshes, 16=keep inditical vertices, 32=one mesh per file)</description>
+                <description>Import flags (8=do not optimize meshes, 16=keep inditical vertices, 32=one mesh per file, 128=ignore up vector coded in fileformat (e.g. Collada))</description>
             </param>
         </params>
         <return>
