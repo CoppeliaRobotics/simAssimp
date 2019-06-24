@@ -92,7 +92,8 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
     splitString(fileNames,';',filenames);
     for (size_t wi=0;wi<filenames.size();wi++)
     {
-        printf("Assimp: importing '%s'\n",filenames[wi].c_str());
+        if ((options&256)==0)
+            printf("Assimp: importing '%s'\n",filenames[wi].c_str());
         std::vector<int> shapeHandlesForThisFile;
         bool hasMaterials=false;
         Assimp::Importer importer;
@@ -347,7 +348,8 @@ void importShapes(SScriptCallBack *p, const char *cmd, importShapes_in *in, impo
 
 void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filename,const char* format,float scaling,int upVector,int options)
 {
-    printf("Assimp: exporting '%s'\n",filename);
+    if ((options&256)==0)
+        printf("Assimp: exporting '%s'\n",filename);
 
     struct SShape
     {
@@ -600,7 +602,8 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
     for (size_t wi=0;wi<filenames.size();wi++)
     {
         bool newFile=true;
-        printf("Assimp: importing '%s'\n",filenames[wi].c_str());
+        if ((options&256)==0)
+            printf("Assimp: importing '%s'\n",filenames[wi].c_str());
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,aiComponent_ANIMATIONS|aiComponent_LIGHTS|aiComponent_CAMERAS);
         importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE,aiPrimitiveType_POINT|aiPrimitiveType_LINE);
@@ -751,7 +754,8 @@ void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, impo
 
 void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const std::vector<std::vector<int>>& indices,const char* filename,const char* format,float scaling,int upVector,int options)
 {
-    printf("Assimp: exporting '%s'\n",filename);
+    if ((options&256)==0)
+        printf("Assimp: exporting '%s'\n",filename);
 
     aiScene scene;
     scene.mRootNode=new aiNode();
