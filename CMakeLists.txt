@@ -1,61 +1,64 @@
 cmake_minimum_required(VERSION 2.8.11)
-project(v_repExtAssimp)
+project(simExtAssimp)
 
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MACOSX_RPATH 1)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-
 find_package(Boost COMPONENTS thread REQUIRED)
-#find_package(Assimp REQUIRED)
+find_package(assimp REQUIRED)
 
+if(NOT LIBPLUGIN_DIR)
+    if(DEFINED ENV{COPPELIASIM_ROOT_DIR})
+        set(LIBPLUGIN_DIR $ENV{COPPELIASIM_ROOT_DIR}/programming/libPlugin)
+    else()
+        set(LIBPLUGIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../libPlugin)
+    endif()
+endif()
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CoppeliaRobotics-modules)
-find_package(VREP 3.6.0 REQUIRED)
+    ${LIBPLUGIN_DIR}/cmake)
+find_package(CoppeliaSim 4.0.0.0 REQUIRED)
 
-include_directories(${VREP_INCLUDE})
-include_directories(${VREP_INCLUDE}/../v_repMath)
-include_directories(${VREP_INCLUDE}/../include/stack)
+include_directories(${COPPELIASIM_INCLUDE_DIR})
+include_directories(${COPPELIASIM_INCLUDE_DIR}/../simMath)
+include_directories(${COPPELIASIM_INCLUDE_DIR}/stack)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/generated)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(BEFORE ${ASSIMP_INCLUDE_DIRS})
 
-vrep_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simExtAssimp.lua)
+coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simExtAssimp.lua)
 
 include(CheckCXXSourceCompiles)
 set(CMAKE_REQUIRED_INCLUDES ${ASSIMP_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_LIBRARIES ${ASSIMP_LIBS})
+set(CMAKE_REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 set(SOURCES
     plugin.cpp
-    ${VREP_INCLUDE}/../v_repMath/MyMath.cpp
-    ${VREP_INCLUDE}/../v_repMath/3Vector.cpp
-    ${VREP_INCLUDE}/../v_repMath/4Vector.cpp
-    ${VREP_INCLUDE}/../v_repMath/6Vector.cpp
-    ${VREP_INCLUDE}/../v_repMath/7Vector.cpp
-    ${VREP_INCLUDE}/../v_repMath/3X3Matrix.cpp
-    ${VREP_INCLUDE}/../v_repMath/4X4Matrix.cpp
-    ${VREP_INCLUDE}/../v_repMath/6X6Matrix.cpp
-    ${VREP_INCLUDE}/../common/stack/stackArray.cpp
-    ${VREP_INCLUDE}/../common/stack/stackBool.cpp
-    ${VREP_INCLUDE}/../common/stack/stackMap.cpp
-    ${VREP_INCLUDE}/../common/stack/stackNull.cpp
-    ${VREP_INCLUDE}/../common/stack/stackNumber.cpp
-    ${VREP_INCLUDE}/../common/stack/stackObject.cpp
-    ${VREP_INCLUDE}/../common/stack/stackString.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/v_repPlusPlus/Plugin.cpp
-    ${CMAKE_CURRENT_BINARY_DIR}/generated/stubs.cpp
-    ${VREP_EXPORTED_SOURCES}
+    ${COPPELIASIM_COMMON_DIR}/../simMath/MyMath.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/3Vector.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/4Vector.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/6Vector.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/7Vector.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/3X3Matrix.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/4X4Matrix.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/6X6Matrix.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackArray.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackBool.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackMap.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackNull.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackNumber.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackObject.cpp
+    ${COPPELIASIM_COMMON_DIR}/stack/stackString.cpp
+    ${COPPELIASIM_EXPORTED_SOURCES}
 )
 
-add_library(v_repExtAssimp SHARED ${SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/generated/stubs.cpp" "${VREP_EXPORTED_SOURCES}" "${CMAKE_CURRENT_SOURCE_DIR}/external/v_repPlusPlus/Plugin.cpp")
-target_link_libraries(v_repExtAssimp ${Boost_LIBRARIES} ${ASSIMP_LIBS} ${VREP_LIBRARIES})
+add_library(simExtAssimp SHARED ${SOURCES})
+target_link_libraries(simExtAssimp ${Boost_LIBRARIES} ${ASSIMP_LIBRARIES} ${COPPELIASIM_LIBRARIES})
 
-install(TARGETS v_repExtAssimp DESTINATION ${VREP_ROOT})
+install(TARGETS simExtAssimp DESTINATION ${COPPELIASIM_ROOT_DIR})
 

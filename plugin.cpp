@@ -12,7 +12,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/matrix4x4.h>
 #include <assimp/vector3.h>
-#include "v_repPlusPlus/Plugin.h"
+#include "simPlusPlus/Plugin.h"
 #include "plugin.h"
 #include "stubs.h"
 
@@ -31,7 +31,7 @@ int parseVectorUp(int vu, int def)
     }
 }
 
-void splitString(const std::string& str,char delChar,std::vector<std::string>& words) 
+void splitString(const std::string& str,char delChar,std::vector<std::string>& words)
 {
     std::stringstream ss(str);
     std::string itm;
@@ -292,9 +292,9 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                     ca[2]=0.499f;
                 }
                 float cad[3]={std::max<float>(ca[0],cd[0]),std::max<float>(ca[1],cd[1]),std::max<float>(ca[2],cd[2])};
-                simSetShapeColor(h,"",sim_colorcomponent_ambient_diffuse,cad);
-                simSetShapeColor(h,"",sim_colorcomponent_specular,cs);
-                simSetShapeColor(h,"",sim_colorcomponent_emission,ce);
+                simSetShapeColor(h,nullptr,sim_colorcomponent_ambient_diffuse,cad);
+                simSetShapeColor(h,nullptr,sim_colorcomponent_specular,cs);
+                simSetShapeColor(h,nullptr,sim_colorcomponent_emission,ce);
                 if ( (ca[0]!=0.499f)||(ca[1]!=0.499f)||(ca[2]!=0.499f) )
                     hasMaterials=true;
                 if ( (cd[0]!=0.499f)||(cd[1]!=0.499f)||(cd[2]!=0.499f) )
@@ -302,7 +302,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                 if (opacity!=1.0f)
                 {
                     float tr=1.0f-opacity;
-                    simSetShapeColor(h,"",sim_colorcomponent_transparency,&tr);
+                    simSetShapeColor(h,nullptr,sim_colorcomponent_transparency,&tr);
                 }
                 shapeHandlesForThisFile.push_back(h);
             }
@@ -903,7 +903,7 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
         simSetLastError(LUA_EXPORTMESHES_COMMAND,"Not enough arguments.");
 }
 
-VREP_DLLEXPORT int* assimp_importShapes(const char* fileNames,int maxTextures,float scaling,int upVector,int options,int* shapeCount)
+SIM_DLLEXPORT int* assimp_importShapes(const char* fileNames,int maxTextures,float scaling,int upVector,int options,int* shapeCount)
 {
     int* retVal=nullptr;
     std::vector<int> shapeHandles;
@@ -918,13 +918,13 @@ VREP_DLLEXPORT int* assimp_importShapes(const char* fileNames,int maxTextures,fl
     return(retVal);
 }
 
-VREP_DLLEXPORT void assimp_exportShapes(const int* shapeHandles,int shapeCount,const char* filename,const char* format,float scaling,int upVector,int options)
+SIM_DLLEXPORT void assimp_exportShapes(const int* shapeHandles,int shapeCount,const char* filename,const char* format,float scaling,int upVector,int options)
 {
     std::vector<int> handles(shapeHandles,shapeHandles+shapeCount);
     assimpExportShapes(handles,filename,format,scaling,upVector,options);
 }
 
-VREP_DLLEXPORT int assimp_importMeshes(const char* fileNames,float scaling,int upVector,int options,float*** allVertices,int** verticesSizes,int*** allIndices,int** indicesSizes)
+SIM_DLLEXPORT int assimp_importMeshes(const char* fileNames,float scaling,int upVector,int options,float*** allVertices,int** verticesSizes,int*** allIndices,int** indicesSizes)
 {
     std::vector<std::vector<float>> _allVertices;
     std::vector<std::vector<int>> _allIndices;
@@ -954,7 +954,7 @@ VREP_DLLEXPORT int assimp_importMeshes(const char* fileNames,float scaling,int u
     return(retVal);
 }
 
-VREP_DLLEXPORT void assimp_exportMeshes(int meshCnt,const float** allVertices,const int* verticesSizes,const int** allIndices,const int* indicesSizes,const char* filename,const char* format,float scaling,int upVector,int options)
+SIM_DLLEXPORT void assimp_exportMeshes(int meshCnt,const float** allVertices,const int* verticesSizes,const int** allIndices,const int* indicesSizes,const char* filename,const char* format,float scaling,int upVector,int options)
 {
     std::vector<std::vector<float>> _allVertices;
     std::vector<std::vector<int>> _allIndices;
@@ -966,7 +966,7 @@ VREP_DLLEXPORT void assimp_exportMeshes(int meshCnt,const float** allVertices,co
     assimpExportMeshes(_allVertices,_allIndices,filename,format,scaling,upVector,options);
 }
 
-class Plugin : public vrep::Plugin
+class Plugin : public sim::Plugin
 {
 public:
     void onStart()
@@ -979,4 +979,4 @@ public:
     }
 };
 
-VREP_PLUGIN(PLUGIN_NAME, PLUGIN_VERSION, Plugin)
+SIM_PLUGIN(PLUGIN_NAME, PLUGIN_VERSION, Plugin)

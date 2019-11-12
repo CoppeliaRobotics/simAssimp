@@ -3,7 +3,7 @@
 
 <plugin name="Assimp" short-name="Assimp" author="marc@coppeliarobotics.com">
 
-    <description>Plugin for importing CAD files in V-REP</description>
+    <description>Plugin for importing CAD files</description>
 
     <enum name="upVector" item-prefix="upvect_" base="0">
         <item name="auto">
