@@ -62,7 +62,7 @@
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0">
-                <description>Export flags (1=drop textures, 2=ignore colors, 256=silent)</description>
+                <description>Export flags (1=drop textures, 2=ignore colors, 4=drop normals, 8=export only visible, 256=silent)</description>
             </param>
         </params>
     </command>

@@ -4,7 +4,7 @@
 #include "config.h"
 
 #define PLUGIN_NAME "Assimp"
-#define PLUGIN_VERSION 1
+#define PLUGIN_VERSION 2
 
 #endif // PLUGIN_H_INCLUDED
 
