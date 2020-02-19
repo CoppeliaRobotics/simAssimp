@@ -395,100 +395,103 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
             int res=simGetShapeViz(h,compoundIndex++,&shapeInfo);
             while (res>0)
             {
-                float* __vert=nullptr;
-                if ((options&5)==5)
-                { // we drop textures and normals
-                    __vert=shapeInfo.vertices;
-                }
-                else
-                { // we keep normals and/or textures. We need to duplicate vertices:
-                    __vert=(float*)simCreateBuffer(3*shapeInfo.indicesSize*sizeof(float));
-                    for (int i=0;i<shapeInfo.indicesSize;i++)
-                    {
-                        __vert[3*i+0]=shapeInfo.vertices[3*shapeInfo.indices[i]+0];
-                        __vert[3*i+1]=shapeInfo.vertices[3*shapeInfo.indices[i]+1];
-                        __vert[3*i+2]=shapeInfo.vertices[3*shapeInfo.indices[i]+2];
-                        shapeInfo.indices[i]=i;
-                    }
-                    simReleaseBuffer((char*)shapeInfo.vertices);
-                    shapeInfo.verticesSize=3*shapeInfo.indicesSize;
-                }
-                SShape s;
-                s.vertices=__vert;
-                s.verticesSize=shapeInfo.verticesSize;
-                for (int i=0;i<s.verticesSize/3;i++)
-                { // correctly transform the vertices:
-                    C3Vector v(s.vertices+3*i);
-                    v=tr*v;
-                    if (upVector==1)
-                    {
-                        s.vertices[3*i+0]=v(0)*scaling;
-                        s.vertices[3*i+1]=v(1)*scaling;
-                        s.vertices[3*i+2]=v(2)*scaling;
+                if ((shapeInfo.textureOptions&8)==0)
+                { // component is not wireframe (we ignore wireframe components)
+                    float* __vert=nullptr;
+                    if ((options&5)==5)
+                    { // we drop textures and normals
+                        __vert=shapeInfo.vertices;
                     }
                     else
-                    {
-                        s.vertices[3*i+0]=v(0)*scaling;
-                        s.vertices[3*i+1]=v(2)*scaling;
-                        s.vertices[3*i+2]=-v(1)*scaling;
-                    }
-                }
-                s.indices=shapeInfo.indices;
-                s.indicesSize=shapeInfo.indicesSize;
-
-                s.normals=shapeInfo.normals;
-                for (int i=0;i<s.indicesSize;i++)
-                { // correctly transform the normals:
-                    C3Vector v(s.normals+3*i);
-                    v=tr.Q*v;
-                    s.normals[3*i+0]=v(0);
-                    s.normals[3*i+1]=v(1);
-                    s.normals[3*i+2]=v(2);
-                }
-                s.colorAD[0]=shapeInfo.colors[0];
-                s.colorAD[1]=shapeInfo.colors[1];
-                s.colorAD[2]=shapeInfo.colors[2];
-                s.colorS[0]=shapeInfo.colors[3];
-                s.colorS[1]=shapeInfo.colors[4];
-                s.colorS[2]=shapeInfo.colors[5];
-                s.colorE[0]=shapeInfo.colors[6];
-                s.colorE[1]=shapeInfo.colors[7];
-                s.colorE[2]=shapeInfo.colors[8];
-                if ( (shapeInfo.texture!=nullptr)&&((options&1)==0) )
-                {
-                    s.textureId=shapeInfo.textureId;
-                    std::map<int,STexture>::iterator textIt=allTextures.find(s.textureId);
-                    if (textIt==allTextures.end())
-                    {
-                        STexture t;
-                        t.image=(unsigned char*)shapeInfo.texture;
-                        t.imgRes[0]=shapeInfo.textureRes[0];
-                        t.imgRes[1]=shapeInfo.textureRes[1];
-                        t.textureId=shapeInfo.textureId;
-                        t.filename=filenameNoExt+std::string("_")+std::to_string(t.textureId)+std::string(".png");
-                        simSaveImage(t.image,t.imgRes,1,t.filename.c_str(),-1,nullptr);
-                        size_t ll1=t.filename.find_last_of('/');
-                        size_t ll2=t.filename.find_last_of('\\');
-                        if ( (ll1!=std::string::npos)||(ll2!=std::string::npos) )
+                    { // we keep normals and/or textures. We need to duplicate vertices:
+                        __vert=(float*)simCreateBuffer(3*shapeInfo.indicesSize*sizeof(float));
+                        for (int i=0;i<shapeInfo.indicesSize;i++)
                         {
-                            if (ll1==std::string::npos)
-                                t.filename.erase(t.filename.begin(),t.filename.begin()+ll2+1);
-                            else
-                            {
-                                if (ll2==std::string::npos)
-                                    t.filename.erase(t.filename.begin(),t.filename.begin()+ll1+1);
-                                else
-                                    t.filename.erase(t.filename.begin(),t.filename.begin()+std::max<int>(ll1,ll2)+1);
-                            }
+                            __vert[3*i+0]=shapeInfo.vertices[3*shapeInfo.indices[i]+0];
+                            __vert[3*i+1]=shapeInfo.vertices[3*shapeInfo.indices[i]+1];
+                            __vert[3*i+2]=shapeInfo.vertices[3*shapeInfo.indices[i]+2];
+                            shapeInfo.indices[i]=i;
                         }
-                        allTextures[shapeInfo.textureId]=t;
-                        texturesCnt++;
+                        simReleaseBuffer((char*)shapeInfo.vertices);
+                        shapeInfo.verticesSize=3*shapeInfo.indicesSize;
                     }
+                    SShape s;
+                    s.vertices=__vert;
+                    s.verticesSize=shapeInfo.verticesSize;
+                    for (int i=0;i<s.verticesSize/3;i++)
+                    { // correctly transform the vertices:
+                        C3Vector v(s.vertices+3*i);
+                        v=tr*v;
+                        if (upVector==1)
+                        {
+                            s.vertices[3*i+0]=v(0)*scaling;
+                            s.vertices[3*i+1]=v(1)*scaling;
+                            s.vertices[3*i+2]=v(2)*scaling;
+                        }
+                        else
+                        {
+                            s.vertices[3*i+0]=v(0)*scaling;
+                            s.vertices[3*i+1]=v(2)*scaling;
+                            s.vertices[3*i+2]=-v(1)*scaling;
+                        }
+                    }
+                    s.indices=shapeInfo.indices;
+                    s.indicesSize=shapeInfo.indicesSize;
+
+                    s.normals=shapeInfo.normals;
+                    for (int i=0;i<s.indicesSize;i++)
+                    { // correctly transform the normals:
+                        C3Vector v(s.normals+3*i);
+                        v=tr.Q*v;
+                        s.normals[3*i+0]=v(0);
+                        s.normals[3*i+1]=v(1);
+                        s.normals[3*i+2]=v(2);
+                    }
+                    s.colorAD[0]=shapeInfo.colors[0];
+                    s.colorAD[1]=shapeInfo.colors[1];
+                    s.colorAD[2]=shapeInfo.colors[2];
+                    s.colorS[0]=shapeInfo.colors[3];
+                    s.colorS[1]=shapeInfo.colors[4];
+                    s.colorS[2]=shapeInfo.colors[5];
+                    s.colorE[0]=shapeInfo.colors[6];
+                    s.colorE[1]=shapeInfo.colors[7];
+                    s.colorE[2]=shapeInfo.colors[8];
+                    if ( (shapeInfo.texture!=nullptr)&&((options&1)==0) )
+                    {
+                        s.textureId=shapeInfo.textureId;
+                        std::map<int,STexture>::iterator textIt=allTextures.find(s.textureId);
+                        if (textIt==allTextures.end())
+                        {
+                            STexture t;
+                            t.image=(unsigned char*)shapeInfo.texture;
+                            t.imgRes[0]=shapeInfo.textureRes[0];
+                            t.imgRes[1]=shapeInfo.textureRes[1];
+                            t.textureId=shapeInfo.textureId;
+                            t.filename=filenameNoExt+std::string("_")+std::to_string(t.textureId)+std::string(".png");
+                            simSaveImage(t.image,t.imgRes,1,t.filename.c_str(),-1,nullptr);
+                            size_t ll1=t.filename.find_last_of('/');
+                            size_t ll2=t.filename.find_last_of('\\');
+                            if ( (ll1!=std::string::npos)||(ll2!=std::string::npos) )
+                            {
+                                if (ll1==std::string::npos)
+                                    t.filename.erase(t.filename.begin(),t.filename.begin()+ll2+1);
+                                else
+                                {
+                                    if (ll2==std::string::npos)
+                                        t.filename.erase(t.filename.begin(),t.filename.begin()+ll1+1);
+                                    else
+                                        t.filename.erase(t.filename.begin(),t.filename.begin()+std::max<int>(ll1,ll2)+1);
+                                }
+                            }
+                            allTextures[shapeInfo.textureId]=t;
+                            texturesCnt++;
+                        }
+                    }
+                    else
+                        s.textureId=-1;
+                    s.textureCoordinates=shapeInfo.textureCoords;
+                    allShapeComponents.push_back(s);
                 }
-                else
-                    s.textureId=-1;
-                s.textureCoordinates=shapeInfo.textureCoords;
-                allShapeComponents.push_back(s);
                 res=simGetShapeViz(h,compoundIndex++,&shapeInfo);
             }
         }
