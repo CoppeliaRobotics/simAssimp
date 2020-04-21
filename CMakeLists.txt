@@ -60,5 +60,5 @@ set(SOURCES
 add_library(simExtAssimp SHARED ${SOURCES})
 target_link_libraries(simExtAssimp ${Boost_LIBRARIES} ${ASSIMP_LIBRARIES} ${COPPELIASIM_LIBRARIES})
 
-install(TARGETS simExtAssimp DESTINATION ${COPPELIASIM_ROOT_DIR})
+install(TARGETS simExtAssimp DESTINATION ${COPPELIASIM_PLUGINS_DIR})
 
