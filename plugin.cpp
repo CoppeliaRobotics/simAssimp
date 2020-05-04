@@ -97,7 +97,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
         if (p>=sim_verbosity_infos)
         {
             if ((options&256)==0)
-                printf("simExtAssimp info: importing '%s'\n",filenames[wi].c_str());
+                printf("simExtAssimp plugin info: importing '%s'\n",filenames[wi].c_str());
         }
         std::vector<int> shapeHandlesForThisFile;
         bool hasMaterials=false;
@@ -358,7 +358,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
     if (p>=sim_verbosity_infos)
     {
         if ((options&256)==0)
-            printf("simExtAssimp info: exporting '%s'\n",filename);
+            printf("simExtAssimp plugin info: exporting '%s'\n",filename);
     }
 
     struct SShape
@@ -513,7 +513,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
         if (p>=sim_verbosity_errors)
         {
             if ((options&256)==0)
-                printf("simExtAssimp error: nothing to export\n");
+                printf("simExtAssimp plugin error: nothing to export\n");
         }
         return;
     }
@@ -658,7 +658,7 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
         if (p>=sim_verbosity_infos)
         {
             if ((options&256)==0)
-                printf("simExtAssimp info: importing '%s'\n",filenames[wi].c_str());
+                printf("simExtAssimp plugin info: importing '%s'\n",filenames[wi].c_str());
         }
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,aiComponent_ANIMATIONS|aiComponent_LIGHTS|aiComponent_CAMERAS);
@@ -815,7 +815,7 @@ void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const st
     if (p>=sim_verbosity_infos)
     {
         if ((options&256)==0)
-            printf("simExtAssimp info: exporting '%s'\n",filename);
+            printf("simExtAssimp plugin info: exporting '%s'\n",filename);
     }
 
     aiScene scene;
