@@ -1035,8 +1035,8 @@ public:
         if(!registerScriptStuff())
             throw std::runtime_error("failed to register script stuff");
 
-        simSetModuleInfo(PLUGIN_NAME, 0, "Assimp-based CAD Import Plugin", 0);
-        simSetModuleInfo(PLUGIN_NAME, 1, BUILD_DATE, 0);
+        setExtVersion("Assimp-based CAD Import Plugin");
+        setBuildDate(BUILD_DATE);
     }
 };
 
