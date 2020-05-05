@@ -16,6 +16,14 @@
 #include "plugin.h"
 #include "stubs.h"
 
+void outputMsg(int msgType,const char* msg)
+{
+    int plugin_verbosity = sim_verbosity_default;
+    simGetModuleInfo(PLUGIN_NAME,sim_moduleinfo_verbosity,nullptr,&plugin_verbosity);
+    if (plugin_verbosity>=msgType)
+        printf("%s\n",msg);
+}
+
 int parseVectorUp(int vu, int def)
 {
     switch(vu)
@@ -92,12 +100,11 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
     splitString(fileNames,';',filenames);
     for (size_t wi=0;wi<filenames.size();wi++)
     {
-        int p=2;
-        simGetInt32Parameter(sim_intparam_verbosity,&p);
-        if (p>=sim_verbosity_infos)
+        if ((options&256)==0)
         {
-            if ((options&256)==0)
-                printf("simExtAssimp plugin info: importing '%s'\n",filenames[wi].c_str());
+            char txt[1000];
+            snprintf(txt,sizeof(txt),"simExtAssimp plugin info: importing '%s'",filenames[wi].c_str());
+            outputMsg(sim_verbosity_infos,txt);
         }
         std::vector<int> shapeHandlesForThisFile;
         bool hasMaterials=false;
@@ -353,12 +360,11 @@ void importShapes(SScriptCallBack *p, const char *cmd, importShapes_in *in, impo
 
 void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filename,const char* format,float scaling,int upVector,int options)
 {
-    int p=2;
-    simGetInt32Parameter(sim_intparam_verbosity,&p);
-    if (p>=sim_verbosity_infos)
+    if ((options&256)==0)
     {
-        if ((options&256)==0)
-            printf("simExtAssimp plugin info: exporting '%s'\n",filename);
+        char txt[1000];
+        snprintf(txt,sizeof(txt),"simExtAssimp plugin info: exporting '%s'",filename);
+        outputMsg(sim_verbosity_infos,txt);
     }
 
     struct SShape
@@ -508,13 +514,8 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
     }
     if (allShapeComponents.size()==0)
     {
-        int p=2;
-        simGetInt32Parameter(sim_intparam_verbosity,&p);
-        if (p>=sim_verbosity_errors)
-        {
-            if ((options&256)==0)
-                printf("simExtAssimp plugin error: nothing to export\n");
-        }
+        if ((options&256)==0)
+            outputMsg(sim_verbosity_errors,"simExtAssimp plugin error: nothing to export");
         return;
     }
 
@@ -653,12 +654,11 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
     for (size_t wi=0;wi<filenames.size();wi++)
     {
         bool newFile=true;
-        int p=2;
-        simGetInt32Parameter(sim_intparam_verbosity,&p);
-        if (p>=sim_verbosity_infos)
+        if ((options&256)==0)
         {
-            if ((options&256)==0)
-                printf("simExtAssimp plugin info: importing '%s'\n",filenames[wi].c_str());
+            char txt[1000];
+            snprintf(txt,sizeof(txt),"simExtAssimp plugin info: importing '%s'",filenames[wi].c_str());
+            outputMsg(sim_verbosity_infos,txt);
         }
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,aiComponent_ANIMATIONS|aiComponent_LIGHTS|aiComponent_CAMERAS);
@@ -810,12 +810,11 @@ void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, impo
 
 void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const std::vector<std::vector<int>>& indices,const char* filename,const char* format,float scaling,int upVector,int options)
 {
-    int p=2;
-    simGetInt32Parameter(sim_intparam_verbosity,&p);
-    if (p>=sim_verbosity_infos)
+    if ((options&256)==0)
     {
-        if ((options&256)==0)
-            printf("simExtAssimp plugin info: exporting '%s'\n",filename);
+        char txt[1000];
+        snprintf(txt,sizeof(txt),"simExtAssimp plugin info: exporting '%s'",filename);
+        outputMsg(sim_verbosity_infos,txt);
     }
 
     aiScene scene;
