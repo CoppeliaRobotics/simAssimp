@@ -103,7 +103,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
         if ((options&256)==0)
         {
             char txt[1000];
-            snprintf(txt,sizeof(txt),"simExtAssimp plugin info: importing '%s'",filenames[wi].c_str());
+            snprintf(txt,sizeof(txt),"simExtAssimp: info: importing '%s'",filenames[wi].c_str());
             outputMsg(sim_verbosity_infos,txt);
         }
         std::vector<int> shapeHandlesForThisFile;
@@ -363,7 +363,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
     if ((options&256)==0)
     {
         char txt[1000];
-        snprintf(txt,sizeof(txt),"simExtAssimp plugin info: exporting '%s'",filename);
+        snprintf(txt,sizeof(txt),"simExtAssimp: info: exporting '%s'",filename);
         outputMsg(sim_verbosity_infos,txt);
     }
 
@@ -657,7 +657,7 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
         if ((options&256)==0)
         {
             char txt[1000];
-            snprintf(txt,sizeof(txt),"simExtAssimp plugin info: importing '%s'",filenames[wi].c_str());
+            snprintf(txt,sizeof(txt),"simExtAssimp: info: importing '%s'",filenames[wi].c_str());
             outputMsg(sim_verbosity_infos,txt);
         }
         Assimp::Importer importer;
@@ -813,7 +813,7 @@ void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const st
     if ((options&256)==0)
     {
         char txt[1000];
-        snprintf(txt,sizeof(txt),"simExtAssimp plugin info: exporting '%s'",filename);
+        snprintf(txt,sizeof(txt),"simExtAssimp: info: exporting '%s'",filename);
         outputMsg(sim_verbosity_infos,txt);
     }
 
