@@ -23,10 +23,10 @@
             <param name="filenames" type="string">
                 <description>The filenames (semicolon-separated), including their extensions</description>
             </param>
-            <param name="maxTextureSize" type="int" item-type="int" minsize="8" maxsize="2048" default="512">
+            <param name="maxTextureSize" type="int" item-type="int" default="512">
                 <description>The desired maximum texture size (textures will be scaled)</description>
             </param>
-            <param name="scaling" type="float" item-type="float" minsize="0.0" maxsize="1000.0" default="0.0">
+            <param name="scaling" type="float" item-type="float" default="0.0">
                 <description>The desired mesh scaling. 0.0 for automatic scaling</description>
             </param>
             <param name="upVector" type="int" default="sim_assimp_upvect_auto">
@@ -55,7 +55,7 @@
             <param name="formatId" type="string">
                 <description>see simAssimp.getExportFormat</description>
             </param>
-            <param name="scaling" type="float" item-type="float" minsize="0.001" maxsize="1000.0" default="1.0">
+            <param name="scaling" type="float" item-type="float" default="1.0">
                 <description>The desired mesh scaling.</description>
             </param>
             <param name="upVector" type="int" default="sim_assimp_upvect_z">
@@ -110,7 +110,7 @@
             <param name="filenames" type="string">
                 <description>The filenames (semicolon-separated), including their extensions</description>
             </param>
-            <param name="scaling" type="float" item-type="float" minsize="0.0" maxsize="1000.0" default="0.0">
+            <param name="scaling" type="float" item-type="float" default="0.0">
                 <description>The desired mesh scaling. 0.0 for automatic scaling</description>
             </param>
             <param name="upVector" type="int" default="sim_assimp_upvect_auto">
@@ -145,7 +145,7 @@
             <param name="formatId" type="string" skip="true">
                 <description>see simAssimp.getExportFormat</description>
             </param>
-            <param name="scaling" type="float" item-type="float" minsize="0.001" maxsize="1000.0" default="1.0" skip="true">
+            <param name="scaling" type="float" item-type="float" default="1.0" skip="true">
                 <description>The desired mesh scaling.</description>
             </param>
             <param name="upVector" type="int" default="sim_assimp_upvect_z" skip="true">
