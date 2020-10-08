@@ -835,9 +835,9 @@ void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const st
         {
             const float* v=&(vertices[shapeCompI])[0];
             if (upVector!=2)
-                pMesh->mVertices[i]=aiVector3D(v[3*i+0]*scaling,v[3*i+2]*scaling,-v[3*i+1]*scaling);
-            else
                 pMesh->mVertices[i]=aiVector3D(v[3*i+0]*scaling,v[3*i+1]*scaling,v[3*i+2]*scaling);
+            else
+                pMesh->mVertices[i]=aiVector3D(v[3*i+0]*scaling,v[3*i+2]*scaling,-v[3*i+1]*scaling);
         }
 
         pMesh->mNormals=nullptr;
