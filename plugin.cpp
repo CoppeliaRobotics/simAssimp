@@ -837,7 +837,7 @@ void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const st
             if (upVector!=2)
                 pMesh->mVertices[i]=aiVector3D(v[3*i+0]*scaling,v[3*i+1]*scaling,v[3*i+2]*scaling);
             else
-                pMesh->mVertices[i]=aiVector3D(v[3*i+1]*scaling,v[3*i+2]*scaling,v[3*i+0]*scaling);
+                pMesh->mVertices[i]=aiVector3D(v[3*i+0]*scaling,v[3*i+2]*scaling,-v[3*i+1]*scaling);
         }
 
         pMesh->mNormals=nullptr;
@@ -908,6 +908,7 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
                                     simSetLastError(LUA_EXPORTMESHES_COMMAND,"argument 5: invalid argument.");
                                     ok=false;
                                 }
+                                scaling = inArguments.getFloat(4);
                             }
                             if ( ok&&(inArguments.getSize()>5) )
                             {
@@ -916,6 +917,7 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
                                     simSetLastError(LUA_EXPORTMESHES_COMMAND,"argument 6: invalid argument.");
                                     ok=false;
                                 }
+                                upVector = inArguments.getInt(5);
                             }
                             if ( ok&&(inArguments.getSize()>6) )
                             {
@@ -924,6 +926,7 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
                                     simSetLastError(LUA_EXPORTMESHES_COMMAND,"argument 7: invalid argument.");
                                     ok=false;
                                 }
+                                options = inArguments.getInt(6);
                             }
                             if (ok)
                             {
