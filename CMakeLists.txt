@@ -29,6 +29,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(BEFORE ${ASSIMP_INCLUDE_DIRS})
 
+if(APPLE)
+    # there's an issue with macOS and homebrew's Assimp
+    link_directories(/usr/local/lib)
+endif()
+
 coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simExtAssimp.lua)
 
 include(CheckCXXSourceCompiles)
