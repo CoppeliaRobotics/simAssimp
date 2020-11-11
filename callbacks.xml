@@ -121,10 +121,10 @@
             </param>
         </params>
         <return>
-            <param name="allVertices" type="table" item-type="float-table" skip="true">
+            <param name="allVertices" type="table">
                 <description>A table containing tables of vertices (one table entry per mesh)</description>
             </param>
-            <param name="allIndices" type="table" item-type="int-table" skip="true">
+            <param name="allIndices" type="table">
                 <description>A table containing tables of indices (one table entry per mesh)</description>
             </param>
         </return>
@@ -133,10 +133,10 @@
     <command name="exportMeshes">
         <description>Exports the specified mesh data.</description>
         <params>
-            <param name="allVertices" type="table" item-type="float-table" skip="true">
+            <param name="allVertices" type="table">
                 <description>A table containing tables of vertices (one table entry per mesh)</description>
             </param>
-            <param name="allIndices" type="table" item-type="int-table" skip="true">
+            <param name="allIndices" type="table">
                 <description>A table containing tables of indices (one table entry per mesh)</description>
             </param>
             <param name="filename" type="string" skip="true">
