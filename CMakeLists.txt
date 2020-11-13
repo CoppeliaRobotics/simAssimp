@@ -20,7 +20,6 @@ set(CMAKE_MODULE_PATH
     ${LIBPLUGIN_DIR}/cmake)
 find_package(CoppeliaSim 4.0.0.0 REQUIRED)
 
-include_directories(${COPPELIASIM_INCLUDE_DIR})
 include_directories(${COPPELIASIM_INCLUDE_DIR}/../simMath)
 include_directories(${COPPELIASIM_INCLUDE_DIR}/stack)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/generated)
@@ -58,11 +57,7 @@ set(SOURCES
     ${COPPELIASIM_COMMON_DIR}/stack/stackNumber.cpp
     ${COPPELIASIM_COMMON_DIR}/stack/stackObject.cpp
     ${COPPELIASIM_COMMON_DIR}/stack/stackString.cpp
-    ${COPPELIASIM_EXPORTED_SOURCES}
 )
 
-add_library(simExtAssimp SHARED ${SOURCES})
+coppeliasim_add_plugin(simExtAssimp SOURCES ${SOURCES})
 target_link_libraries(simExtAssimp ${Boost_LIBRARIES} ${ASSIMP_LIBRARIES} ${COPPELIASIM_LIBRARIES})
-
-install(TARGETS simExtAssimp DESTINATION ${COPPELIASIM_PLUGINS_DIR})
-
