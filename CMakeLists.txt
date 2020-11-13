@@ -4,7 +4,6 @@ project(simExtAssimp)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MACOSX_RPATH 1)
 
-find_package(Boost COMPONENTS thread REQUIRED)
 find_package(assimp REQUIRED)
 
 if(NOT LIBPLUGIN_DIR)
@@ -24,7 +23,6 @@ include_directories(${COPPELIASIM_INCLUDE_DIR}/../simMath)
 include_directories(${COPPELIASIM_INCLUDE_DIR}/stack)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/generated)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
-include_directories(${Boost_INCLUDE_DIRS})
 include_directories(BEFORE ${ASSIMP_INCLUDE_DIRS})
 
 if(APPLE)
@@ -34,7 +32,6 @@ endif()
 
 coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simExtAssimp.lua)
 
-include(CheckCXXSourceCompiles)
 set(CMAKE_REQUIRED_INCLUDES ${ASSIMP_INCLUDE_DIRS})
 set(CMAKE_REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
 
@@ -60,4 +57,4 @@ set(SOURCES
 )
 
 coppeliasim_add_plugin(simExtAssimp SOURCES ${SOURCES})
-target_link_libraries(simExtAssimp ${Boost_LIBRARIES} ${ASSIMP_LIBRARIES} ${COPPELIASIM_LIBRARIES})
+target_link_libraries(simExtAssimp ${ASSIMP_LIBRARIES})
