@@ -29,7 +29,7 @@ if(APPLE)
     link_directories(/usr/local/lib)
 endif()
 
-coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simExtAssimp.lua)
+coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simAssimp.lua)
 
 set(CMAKE_REQUIRED_INCLUDES ${ASSIMP_INCLUDE_DIRS})
 set(CMAKE_REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
