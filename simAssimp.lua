@@ -207,6 +207,7 @@ function simAssimp.exportShapesDlg(...)
             if configUiData.dropColors then options=options+2 end
             if configUiData.dropNormals then options=options+4 end
             if configUiData.onlyVisible then options=options+8 end
+            if configUiData.relativeCoords then options=options+512 end
             simAssimp.exportShapes(shapeHandles,filename,fformat,scaling,configUiData.upVector+1,options)
             configUiData=nil
             simUI.destroy(waitUi)
@@ -253,6 +254,10 @@ function simAssimp.exportShapesDlg(...)
         configUiData.onlyVisible=not configUiData.onlyVisible
     end
     
+    function configUiData.onRelativeCoordsChanged(ui,id,newval)
+        configUiData.relativeCoords=not configUiData.relativeCoords
+    end
+    
     local scaling=1
     local vectorUp=0
     local options=0
@@ -270,6 +275,8 @@ function simAssimp.exportShapesDlg(...)
     <checkbox text="" on-change="configUiData.onDropNormalsChanged" id="5" />
     <label text="Export only what is visible"/>
     <checkbox text="" on-change="configUiData.onOnlyVisibleChanged" id="7" />
+    <label text="Coordinates relative to shapes' respective frames"/>
+    <checkbox text="" on-change="configUiData.onRelativeCoordsChanged" id="8" />
     <label text="Up-vector"/>
     <combobox id="6" on-change="configUiData.onUpVectorChanged"></combobox>
 
@@ -285,6 +292,7 @@ function simAssimp.exportShapesDlg(...)
     configUiData.dropColors=false
     configUiData.dropNormals=false
     configUiData.onlyVisible=true
+    configUiData.relativeCoords=false
     configUiData.upVector=0
     configUiData.filename=filename
     simUI.setEditValue(configUiData.dlg,2,tostring(configUiData.scaling))
@@ -292,6 +300,7 @@ function simAssimp.exportShapesDlg(...)
     simUI.setCheckboxValue(configUiData.dlg,4,configUiData.dropColors and 2 or 0)
     simUI.setCheckboxValue(configUiData.dlg,5,configUiData.dropNormals and 2 or 0)
     simUI.setCheckboxValue(configUiData.dlg,7,configUiData.onlyVisible and 2 or 0)
+    simUI.setCheckboxValue(configUiData.dlg,8,configUiData.relativeCoords and 2 or 0)
     configUiData.updateUpVectorCombobox()
 end
 

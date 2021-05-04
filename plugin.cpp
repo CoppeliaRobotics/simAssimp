@@ -430,7 +430,8 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
                     for (int i=0;i<s.verticesSize/3;i++)
                     { // correctly transform the vertices:
                         C3Vector v(s.vertices+3*i);
-                        v=tr*v;
+                        if ((options&512)==0)
+                            v=tr*v;
                         if (upVector==1)
                         {
                             s.vertices[3*i+0]=v(0)*scaling;
