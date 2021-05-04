@@ -275,7 +275,7 @@ function simAssimp.exportShapesDlg(...)
     <checkbox text="" on-change="configUiData.onDropNormalsChanged" id="5" />
     <label text="Export only what is visible"/>
     <checkbox text="" on-change="configUiData.onOnlyVisibleChanged" id="7" />
-    <label text="Coordinates relative to shapes' respective frames"/>
+    <label text="Coordinates relative to first shape's frame"/>
     <checkbox text="" on-change="configUiData.onRelativeCoordsChanged" id="8" />
     <label text="Up-vector"/>
     <combobox id="6" on-change="configUiData.onUpVectorChanged"></combobox>

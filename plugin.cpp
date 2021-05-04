@@ -387,18 +387,30 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
     size_t ll=filenameNoExt.find_last_of('.');
     if (ll!=std::string::npos)
         filenameNoExt.resize(ll);
+    C7Vector firstTrInv;
     for (size_t shapeI=0;shapeI<shapeHandles.size();shapeI++)
     {
         int h=shapeHandles[shapeI];
+        
+        if (shapeI==0)
+        {
+            simGetObjectPosition(h,-1,firstTrInv.X.data);
+            float q[4];
+            simGetObjectQuaternion(h,-1,q);
+            firstTrInv.Q=C4Vector(q[3],q[0],q[1],q[2]);
+            firstTrInv.inverse();
+        }
+        C7Vector tr;
+        simGetObjectPosition(h,-1,tr.X.data);
+        float q[4];
+        simGetObjectQuaternion(h,-1,q);
+        tr.Q=C4Vector(q[3],q[0],q[1],q[2]);
+        if ((options&512)!=0)
+            tr=firstTrInv*tr;
         int visible;
         simGetObjectInt32Parameter(h,sim_objintparam_visible,&visible);
         if ( ((options&8)==0)||(visible!=0) )
         {
-            C7Vector tr;
-            simGetObjectPosition(h,-1,tr.X.data);
-            float q[4];
-            simGetObjectQuaternion(h,-1,q);
-            tr.Q=C4Vector(q[3],q[0],q[1],q[2]);
             int compoundIndex=0;
             SShapeVizInfo shapeInfo;
             int res=simGetShapeViz(h,compoundIndex++,&shapeInfo);
@@ -430,8 +442,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
                     for (int i=0;i<s.verticesSize/3;i++)
                     { // correctly transform the vertices:
                         C3Vector v(s.vertices+3*i);
-                        if ((options&512)==0)
-                            v=tr*v;
+                        v=tr*v;
                         if (upVector==1)
                         {
                             s.vertices[3*i+0]=v(0)*scaling;
