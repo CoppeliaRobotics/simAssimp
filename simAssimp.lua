@@ -311,9 +311,6 @@ function simAssimp.init()
     simAssimp.init=nil
 end
 
-if not __initFunctions then
-    __initFunctions={}
-end
-__initFunctions[#__initFunctions+1]=simAssimp.init
+sim.registerScriptFuncHook('sysCall_init','simAssimp.init',true)
 
 return simAssimp
