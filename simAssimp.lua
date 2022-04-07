@@ -1,8 +1,8 @@
 local simAssimp={}
 
---@fun importDlg Offers import parameters via dialog, before calling simAssimp.import
+--@fun importShapesDlg Offers import parameters via dialog, before calling simAssimp.import
 --@arg string filename The filename (including extension) of the CAD data
---@ret table handles The handles of the imported shapes
+--@ret table.int handles The handles of the imported shapes
 function simAssimp.importShapesDlg(...)
     local filenames=checkargs({{type='string'}},...)
     
@@ -178,9 +178,9 @@ function simAssimp.importShapesDlg(...)
     configUiData.updateUpVectorCombobox()
 end
 
---@fun exportDlg Offers export parameters via dialog, before calling simAssimp.export
+--@fun exportShapesDlg Offers export parameters via dialog, before calling simAssimp.export
 --@arg string filename The filename (including extension) of the CAD data
---@arg table shapeHandles The handles of the shapes to export
+--@arg table.int shapeHandles The handles of the shapes to export
 function simAssimp.exportShapesDlg(...)
     local filename,shapeHandles=checkargs({{type='string'},{type='table',size='1..*',item_type='int'}},...)
     
@@ -303,14 +303,5 @@ function simAssimp.exportShapesDlg(...)
     simUI.setCheckboxValue(configUiData.dlg,8,configUiData.relativeCoords and 2 or 0)
     configUiData.updateUpVectorCombobox()
 end
-
-function simAssimp.init()
-    -- can only be executed once sim.* functions were initialized
-    sim.registerScriptFunction('simAssimp.importShapesDlg@Assimp','int[] shapeHandles=simAssimp.importShapesDlg(string filenames)')
-    sim.registerScriptFunction('simAssimp.exportShapesDlg@Assimp','simAssimp.exportShapesDlg(string filename,int[] shapeHandles)')
-    simAssimp.init=nil
-end
-
-sim.registerScriptFuncHook('sysCall_init','simAssimp.init',true)
 
 return simAssimp
