@@ -306,8 +306,8 @@ end
 
 function simAssimp.init()
     -- can only be executed once sim.* functions were initialized
-    sim.registerScriptFunction('simAssimp.importShapesDlg@Assimp','table shapeHandles=simAssimp.importShapesDlg(string filenames)')
-    sim.registerScriptFunction('simAssimp.exportShapesDlg@Assimp','simAssimp.exportShapesDlg(string filename,table shapeHandles)')
+    sim.registerScriptFunction('simAssimp.importShapesDlg@Assimp','int[] shapeHandles=simAssimp.importShapesDlg(string filenames)')
+    sim.registerScriptFunction('simAssimp.exportShapesDlg@Assimp','simAssimp.exportShapesDlg(string filename,int[] shapeHandles)')
     simAssimp.init=nil
 end
 
