@@ -44,6 +44,7 @@ set(SOURCES
     ${COPPELIASIM_COMMON_DIR}/../simMath/7Vector.cpp
     ${COPPELIASIM_COMMON_DIR}/../simMath/3X3Matrix.cpp
     ${COPPELIASIM_COMMON_DIR}/../simMath/4X4Matrix.cpp
+    ${COPPELIASIM_COMMON_DIR}/../simMath/MMatrix.cpp
     ${COPPELIASIM_COMMON_DIR}/stack/stackArray.cpp
     ${COPPELIASIM_COMMON_DIR}/stack/stackBool.cpp
     ${COPPELIASIM_COMMON_DIR}/stack/stackMap.cpp
