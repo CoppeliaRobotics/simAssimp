@@ -87,7 +87,7 @@ const aiMatrix4x4* getTransform(aiNode* node,const aiMatrix4x4* tr,int meshIndex
     return(nullptr);
 }
 
-void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int upVector,int options,std::vector<int>& shapeHandles)
+void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int upVector,int options,std::vector<int>& shapeHandles)
 {
     std::vector<std::string> filenames;
     splitString(fileNames,';',filenames);
@@ -121,9 +121,9 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
         const aiScene* scene = importer.ReadFile(filenames[wi].c_str(),flags);
         if(scene)
         {
-            float minMaxX[2]={9999999.0f,-9999999.0f};
-            float minMaxY[2]={9999999.0f,-9999999.0f};
-            float minMaxZ[2]={9999999.0f,-9999999.0f};
+            double minMaxX[2]={9999999.0,-9999999.0};
+            double minMaxY[2]={9999999.0,-9999999.0};
+            double minMaxZ[2]={9999999.0,-9999999.0};
             for (size_t i=0;i<scene->mNumMeshes;i++)
             {
                 const aiMatrix4x4* tr=getTransform(scene->mRootNode,&scene->mRootNode->mTransformation,i);
@@ -146,19 +146,19 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                         minMaxZ[1]=mesh->mVertices[j].z;
                 }
             }
-            float l=std::max<float>(minMaxX[1]-minMaxX[0],std::max<float>(minMaxY[1]-minMaxY[0],minMaxZ[1]-minMaxZ[0]));
-            if (scaling==0.0f)
+            double l=std::max<double>(minMaxX[1]-minMaxX[0],std::max<double>(minMaxY[1]-minMaxY[0],minMaxZ[1]-minMaxZ[0]));
+            if (scaling==0.0)
             {
-                scaling=1.0f;
-                while (l>5.0f)
+                scaling=1.0;
+                while (l>5.0)
                 {
-                    l*=0.1f;
-                    scaling*=0.1f;
+                    l*=0.1;
+                    scaling*=0.1;
                 }
-                while (l<0.05f)
+                while (l<0.05)
                 {
-                    l*=10.0f;
-                    scaling*=10.0f;
+                    l*=10.0;
+                    scaling*=10.0;
                 }
             }
             if (upVector==0)
@@ -179,7 +179,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
             {
                 const aiMesh* mesh = scene->mMeshes[i];
                 const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-                std::vector<float> vertices;
+                std::vector<double> vertices;
                 std::vector<int> indices;
                 for (size_t j=0;j<mesh->mNumVertices;j++)
                 {
@@ -212,7 +212,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                 bool hasTexture=false;
                 if ( ((options&1)==0)&&(mesh->HasTextureCoords(0))&&(aiReturn_SUCCESS==aiGetMaterialTexture(material,aiTextureType_DIFFUSE,0,&texPath)) )
                 {
-                    std::vector<float> textureCoords;
+                    std::vector<double> textureCoords;
                     for (size_t j=0;j<indices.size();j++)
                     {
                         int index=indices[j];
@@ -272,10 +272,10 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                         simApplyTexture(h,&textureCoords[0],textureCoords.size(),textIt->second.image,textIt->second.imgRes,16);
                     }
                 }
-                aiColor3D colorA(0.499f,0.499f,0.499f);
-                aiColor3D colorD(0.499f,0.499f,0.499f);
-                aiColor3D colorS(0.0f,0.0f,0.0f);
-                aiColor3D colorE(0.0f,0.0f,0.0f);
+                aiColor3D colorA(0.499,0.499,0.499);
+                aiColor3D colorD(0.499,0.499,0.499);
+                aiColor3D colorS(0.0,0.0,0.0);
+                aiColor3D colorE(0.0,0.0,0.0);
                 if ((options&2)==0)
                 {
                     material->Get(AI_MATKEY_COLOR_AMBIENT,colorA);
@@ -283,13 +283,13 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                     material->Get(AI_MATKEY_COLOR_SPECULAR,colorS);
                     material->Get(AI_MATKEY_COLOR_EMISSIVE,colorE);
                 }
-                float opacity=1.0f;
+                double opacity=1.0;
                 if ((options&4)==0)
                     material->Get(AI_MATKEY_OPACITY,opacity);
-                float ca[3]={colorA.r,colorA.g,colorA.b};
-                float cd[3]={colorD.r,colorD.g,colorD.b};
-                float cs[3]={colorS.r,colorS.g,colorS.b};
-                float ce[3]={colorE.r,colorE.g,colorE.b};
+                float ca[3]={(float)colorA.r,(float)colorA.g,(float)colorA.b};
+                float cd[3]={(float)colorD.r,(float)colorD.g,(float)colorD.b};
+                float cs[3]={(float)colorS.r,(float)colorS.g,(float)colorS.b};
+                float ce[3]={(float)colorE.r,(float)colorE.g,(float)colorE.b};
                 if ( hasTexture&&(ca[0]==0.0f)&&(ca[1]==0.0f)&&(ca[2]==0.0f) )
                 {
                     ca[0]=0.499f;
@@ -304,9 +304,9 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
                     hasMaterials=true;
                 if ( (cd[0]!=0.499f)||(cd[1]!=0.499f)||(cd[2]!=0.499f) )
                     hasMaterials=true;
-                if (opacity!=1.0f)
+                if (opacity!=1.0)
                 {
-                    float tr=1.0f-opacity;
+                    float tr=float(1.0-opacity);
                     simSetShapeColor(h,nullptr,sim_colorcomponent_transparency,&tr);
                 }
                 shapeHandlesForThisFile.push_back(h);
@@ -341,7 +341,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,float scaling,int 
 void importShapes(SScriptCallBack *p, const char *cmd, importShapes_in *in, importShapes_out *out)
 {
     if(in->maxTextureSize < 8) throw std::runtime_error("invalid maxTextureSize");
-    if(in->scaling < 0.0f) throw std::runtime_error("invalid scaling");
+    if(in->scaling < 0.0) throw std::runtime_error("invalid scaling");
     if(in->upVector < 0) throw std::runtime_error("invalid upVector");
     if(in->upVector > 2) throw std::runtime_error("invalid upVector");
     if(in->options < 0) throw std::runtime_error("invalid options");
@@ -351,7 +351,7 @@ void importShapes(SScriptCallBack *p, const char *cmd, importShapes_in *in, impo
     out->shapeHandles.assign(handles.begin(),handles.end());
 }
 
-void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filename,const char* format,float scaling,int upVector,int options)
+void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filename,const char* format,double scaling,int upVector,int options)
 {
     if ((options&256)==0)
     {
@@ -362,16 +362,16 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
 
     struct SShape
     {
-        float* vertices;
+        double* vertices;
         int verticesSize;
         int* indices;
         int indicesSize;
-        float* normals;
-        float colorAD[3];
-        float colorS[3];
-        float colorE[3];
+        double* normals;
+        double colorAD[3];
+        double colorS[3];
+        double colorE[3];
         int textureId;
-        float* textureCoordinates;
+        double* textureCoordinates;
     };
     struct STexture
     {
@@ -395,14 +395,14 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
         if (shapeI==0)
         {
             simGetObjectPosition(h,-1,firstTrInv.X.data);
-            float q[4];
+            double q[4];
             simGetObjectQuaternion(h,-1,q);
             firstTrInv.Q=C4Vector(q[3],q[0],q[1],q[2]);
             firstTrInv.inverse();
         }
         C7Vector tr;
         simGetObjectPosition(h,-1,tr.X.data);
-        float q[4];
+        double q[4];
         simGetObjectQuaternion(h,-1,q);
         tr.Q=C4Vector(q[3],q[0],q[1],q[2]);
         if ((options&512)!=0)
@@ -418,14 +418,14 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
             {
                 if ((shapeInfo.textureOptions&8)==0)
                 { // component is not wireframe (we ignore wireframe components)
-                    float* __vert=nullptr;
+                    double* __vert=nullptr;
                     if ((options&5)==5)
                     { // we drop textures and normals
                         __vert=shapeInfo.vertices;
                     }
                     else
                     { // we keep normals and/or textures. We need to duplicate vertices:
-                        __vert=(float*)simCreateBuffer(3*shapeInfo.indicesSize*sizeof(float));
+                        __vert=(double*)simCreateBuffer(3*shapeInfo.indicesSize*sizeof(double));
                         for (int i=0;i<shapeInfo.indicesSize;i++)
                         {
                             __vert[3*i+0]=shapeInfo.vertices[3*shapeInfo.indices[i]+0];
@@ -559,7 +559,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
         pMesh->mNumVertices=allShapeComponents[shapeCompI].verticesSize/3;
         for (int i=0;i<allShapeComponents[shapeCompI].verticesSize/3;i++)
         {
-            float* v=allShapeComponents[shapeCompI].vertices;
+            double* v=allShapeComponents[shapeCompI].vertices;
             pMesh->mVertices[i]=aiVector3D(v[3*i+0],v[3*i+1],v[3*i+2]);
         }
 
@@ -569,7 +569,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
     //        pMesh->mNumNormals=allShapeComponents[shapeCompI].indicesSize;
             for (int i=0;i<allShapeComponents[shapeCompI].indicesSize;i++)
             {
-                float* n=allShapeComponents[shapeCompI].normals;
+                double* n=allShapeComponents[shapeCompI].normals;
                 pMesh->mNormals[i]=aiVector3D(n[3*i+0],n[3*i+1],n[3*i+2]);
             }
         }
@@ -595,10 +595,10 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
             {
                 int* tri=allShapeComponents[shapeCompI].indices;
                 int index[3]={tri[3*i+0],tri[3*i+1],tri[3*i+2]};
-                float* tCoords=allShapeComponents[shapeCompI].textureCoordinates;
-                pMesh->mTextureCoords[0][index[0]]=aiVector3D(tCoords[6*i+0],tCoords[6*i+1],0.0f);
-                pMesh->mTextureCoords[0][index[1]]=aiVector3D(tCoords[6*i+2],tCoords[6*i+3],0.0f);
-                pMesh->mTextureCoords[0][index[2]]=aiVector3D(tCoords[6*i+4],tCoords[6*i+5],0.0f);
+                double* tCoords=allShapeComponents[shapeCompI].textureCoordinates;
+                pMesh->mTextureCoords[0][index[0]]=aiVector3D(tCoords[6*i+0],tCoords[6*i+1],0.0);
+                pMesh->mTextureCoords[0][index[1]]=aiVector3D(tCoords[6*i+2],tCoords[6*i+3],0.0);
+                pMesh->mTextureCoords[0][index[2]]=aiVector3D(tCoords[6*i+4],tCoords[6*i+5],0.0);
             }
             std::map<int,STexture>::iterator textIt=allTextures.find(allShapeComponents[shapeCompI].textureId);
             if (textIt!=allTextures.end())
@@ -647,7 +647,7 @@ void exportShapes(SScriptCallBack *p, const char *cmd, exportShapes_in *in, expo
 
     if (in->shapeHandles.size()<1) throw std::runtime_error("invalid shapeHandles");
     if(!formatOk) throw std::runtime_error("invalid format");
-    if(in->scaling < 0.001f) throw std::runtime_error("invalid scaling");
+    if(in->scaling < 0.001) throw std::runtime_error("invalid scaling");
     if(in->upVector < 1) throw std::runtime_error("invalid upVector");
     if(in->upVector > 2) throw std::runtime_error("invalid upVector");
     if(in->options < 0) throw std::runtime_error("invalid options");
@@ -655,7 +655,7 @@ void exportShapes(SScriptCallBack *p, const char *cmd, exportShapes_in *in, expo
     assimpExportShapes(in->shapeHandles,in->filename.c_str(),in->formatId.c_str(),in->scaling,parseVectorUp(in->upVector,0),in->options);
 }
 
-void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int options,std::vector<std::vector<float>>& allVertices,std::vector<std::vector<int>>& allIndices)
+void assimpImportMeshes(const char* fileNames,double scaling,int upVector,int options,std::vector<std::vector<double>>& allVertices,std::vector<std::vector<int>>& allIndices)
 {
     std::vector<std::string> filenames;
     splitString(fileNames,';',filenames);
@@ -686,9 +686,9 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
         const aiScene* scene = importer.ReadFile(filenames[wi].c_str(),flags);
         if(scene)
         {
-            float minMaxX[2]={9999999.0f,-9999999.0f};
-            float minMaxY[2]={9999999.0f,-9999999.0f};
-            float minMaxZ[2]={9999999.0f,-9999999.0f};
+            double minMaxX[2]={9999999.0,-9999999.0};
+            double minMaxY[2]={9999999.0,-9999999.0};
+            double minMaxZ[2]={9999999.0,-9999999.0};
             for (size_t i=0;i<scene->mNumMeshes;i++)
             {
                 const aiMatrix4x4* tr=getTransform(scene->mRootNode,&scene->mRootNode->mTransformation,i);
@@ -711,19 +711,19 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
                         minMaxZ[1]=mesh->mVertices[j].z;
                 }
             }
-            float l=std::max<float>(minMaxX[1]-minMaxX[0],std::max<float>(minMaxY[1]-minMaxY[0],minMaxZ[1]-minMaxZ[0]));
-            if (scaling==0.0f)
+            double l=std::max<double>(minMaxX[1]-minMaxX[0],std::max<double>(minMaxY[1]-minMaxY[0],minMaxZ[1]-minMaxZ[0]));
+            if (scaling==0.0)
             {
-                scaling=1.0f;
-                while (l>5.0f)
+                scaling=1.0;
+                while (l>5.0)
                 {
-                    l*=0.1f;
-                    scaling*=0.1f;
+                    l*=0.1;
+                    scaling*=0.1;
                 }
-                while (l<0.05f)
+                while (l<0.05)
                 {
-                    l*=10.0f;
-                    scaling*=10.0f;
+                    l*=10.0;
+                    scaling*=10.0;
                 }
             }
             if (upVector==0)
@@ -736,7 +736,7 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
             for (size_t i=0;i<scene->mNumMeshes;i++)
             {
                 const aiMesh* mesh = scene->mMeshes[i];
-                std::vector<float> vertices;
+                std::vector<double> vertices;
                 std::vector<int> indices;
                 for (size_t j=0;j<mesh->mNumVertices;j++)
                 {
@@ -762,7 +762,7 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
                 }
                 if ( newFile||((options&32)==0) )
                 {
-                    allVertices.push_back(std::vector<float>());
+                    allVertices.push_back(std::vector<double>());
                     allIndices.push_back(std::vector<int>());
                     allVertices[allVertices.size()-1].assign(vertices.begin(),vertices.end());
                     allIndices[allIndices.size()-1].assign(indices.begin(),indices.end());
@@ -782,12 +782,12 @@ void assimpImportMeshes(const char* fileNames,float scaling,int upVector,int opt
 
 void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, importMeshes_out *out)
 {
-    if(in->scaling < 0.0f) throw std::runtime_error("invalid scaling");
+    if(in->scaling < 0.0) throw std::runtime_error("invalid scaling");
     if(in->upVector < 0) throw std::runtime_error("invalid upVector");
     if(in->upVector > 2) throw std::runtime_error("invalid upVector");
     if(in->options < 0) throw std::runtime_error("invalid options");
 
-    std::vector<std::vector<float>> allVertices;
+    std::vector<std::vector<double>> allVertices;
     std::vector<std::vector<int>> allIndices;
     assimpImportMeshes(in->filenames.c_str(),in->scaling,parseVectorUp(in->upVector,0),in->options,allVertices,allIndices);
 
@@ -798,9 +798,9 @@ void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, impo
     {
         simPushInt32OntoStack(p->stackID,int(i+1));
         if (allVertices[i].size()>0)
-            simPushFloatTableOntoStack(p->stackID,&allVertices[i][0],int(allVertices[i].size()));
+            simPushDoubleTableOntoStack(p->stackID,&allVertices[i][0],int(allVertices[i].size()));
         else
-            simPushFloatTableOntoStack(p->stackID,nullptr,0);
+            simPushDoubleTableOntoStack(p->stackID,nullptr,0);
         simInsertDataIntoStackTable(p->stackID);
     }
     
@@ -816,7 +816,7 @@ void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, impo
     }
 }
 
-void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const std::vector<std::vector<int>>& indices,const char* filename,const char* format,float scaling,int upVector,int options)
+void assimpExportMeshes(const std::vector<std::vector<double>>& vertices,const std::vector<std::vector<int>>& indices,const char* filename,const char* format,double scaling,int upVector,int options)
 {
     if ((options&256)==0)
     {
@@ -846,7 +846,7 @@ void assimpExportMeshes(const std::vector<std::vector<float>>& vertices,const st
         pMesh->mNumVertices=vertices[shapeCompI].size()/3;
         for (int i=0;i<vertices[shapeCompI].size()/3;i++)
         {
-            const float* v=&(vertices[shapeCompI])[0];
+            const double* v=&(vertices[shapeCompI])[0];
             if (upVector!=2)
                 pMesh->mVertices[i]=aiVector3D(v[3*i+0]*scaling,v[3*i+1]*scaling,v[3*i+2]*scaling);
             else
@@ -911,17 +911,17 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
                         if (inArguments.isString(3))
                         {
                             std::string format(inArguments.getString(3));
-                            float scaling=1.0f;
+                            double scaling=1.0;
                             int upVector=1;
                             int options=0;
                             if (inArguments.getSize()>4)
                             {
-                                if ( (!inArguments.isNumber(4))||(inArguments.getFloat(4)<=0.0f) )
+                                if ( (!inArguments.isNumber(4))||(inArguments.getDouble(4)<=0.0) )
                                 {
                                     simSetLastError(LUA_EXPORTMESHES_COMMAND,"argument 5: invalid argument.");
                                     ok=false;
                                 }
-                                scaling = inArguments.getFloat(4);
+                                scaling = inArguments.getDouble(4);
                             }
                             if ( ok&&(inArguments.getSize()>5) )
                             {
@@ -943,16 +943,16 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
                             }
                             if (ok)
                             {
-                                std::vector<std::vector<float>> allVertices;
+                                std::vector<std::vector<double>> allVertices;
                                 std::vector<std::vector<int>> allIndices;
                                 for (size_t i=0;i<l;i++)
                                 {
                                     CStackArray* vertA=allVerticesA->getArray(i);
                                     CStackArray* indA=allIndicesA->getArray(i);
                                     const std::vector<double>* d=vertA->getDoubles();
-                                    allVertices.push_back(std::vector<float>());
+                                    allVertices.push_back(std::vector<double>());
                                     for (size_t j=0;j<d->size();j++)
-                                        allVertices[allVertices.size()-1].push_back(float(d[0][j]));
+                                        allVertices[allVertices.size()-1].push_back(double(d[0][j]));
                                     allIndices.push_back(std::vector<int>(indA->getIntPointer(),indA->getIntPointer()+indA->getSize()));
                                 }
                                 assimpExportMeshes(allVertices,allIndices,filename.c_str(),format.c_str(),scaling,upVector,options);
@@ -977,7 +977,7 @@ void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, expo
         simSetLastError(LUA_EXPORTMESHES_COMMAND,"Not enough arguments.");
 }
 
-SIM_DLLEXPORT int* assimp_importShapes(const char* fileNames,int maxTextures,float scaling,int upVector,int options,int* shapeCount)
+SIM_DLLEXPORT int* assimp_importShapes(const char* fileNames,int maxTextures,double scaling,int upVector,int options,int* shapeCount)
 {
     int* retVal=nullptr;
     std::vector<int> shapeHandles;
@@ -992,19 +992,19 @@ SIM_DLLEXPORT int* assimp_importShapes(const char* fileNames,int maxTextures,flo
     return(retVal);
 }
 
-SIM_DLLEXPORT void assimp_exportShapes(const int* shapeHandles,int shapeCount,const char* filename,const char* format,float scaling,int upVector,int options)
+SIM_DLLEXPORT void assimp_exportShapes(const int* shapeHandles,int shapeCount,const char* filename,const char* format,double scaling,int upVector,int options)
 {
     std::vector<int> handles(shapeHandles,shapeHandles+shapeCount);
     assimpExportShapes(handles,filename,format,scaling,upVector,options);
 }
 
-SIM_DLLEXPORT int assimp_importMeshes(const char* fileNames,float scaling,int upVector,int options,float*** allVertices,int** verticesSizes,int*** allIndices,int** indicesSizes)
+SIM_DLLEXPORT int assimp_importMeshes(const char* fileNames,double scaling,int upVector,int options,double*** allVertices,int** verticesSizes,int*** allIndices,int** indicesSizes)
 {
-    std::vector<std::vector<float>> _allVertices;
+    std::vector<std::vector<double>> _allVertices;
     std::vector<std::vector<int>> _allIndices;
     assimpImportMeshes(fileNames,scaling,upVector,options,_allVertices,_allIndices);
     int retVal=int(_allVertices.size());
-    allVertices[0]=(float**)simCreateBuffer(retVal*sizeof(float*));
+    allVertices[0]=(double**)simCreateBuffer(retVal*sizeof(double*));
     verticesSizes[0]=(int*)simCreateBuffer(retVal*sizeof(int));
     if (allIndices!=nullptr)
     {
@@ -1013,7 +1013,7 @@ SIM_DLLEXPORT int assimp_importMeshes(const char* fileNames,float scaling,int up
     }
     for (size_t i=0;i<retVal;i++)
     {
-        allVertices[0][i]=(float*)simCreateBuffer(_allVertices[i].size()*sizeof(float));
+        allVertices[0][i]=(double*)simCreateBuffer(_allVertices[i].size()*sizeof(double));
         verticesSizes[0][i]=int(_allVertices[i].size());
         for (size_t j=0;j<_allVertices[i].size();j++)
             allVertices[0][i][j]=_allVertices[i][j];
@@ -1028,13 +1028,13 @@ SIM_DLLEXPORT int assimp_importMeshes(const char* fileNames,float scaling,int up
     return(retVal);
 }
 
-SIM_DLLEXPORT void assimp_exportMeshes(int meshCnt,const float** allVertices,const int* verticesSizes,const int** allIndices,const int* indicesSizes,const char* filename,const char* format,float scaling,int upVector,int options)
+SIM_DLLEXPORT void assimp_exportMeshes(int meshCnt,const double** allVertices,const int* verticesSizes,const int** allIndices,const int* indicesSizes,const char* filename,const char* format,double scaling,int upVector,int options)
 {
-    std::vector<std::vector<float>> _allVertices;
+    std::vector<std::vector<double>> _allVertices;
     std::vector<std::vector<int>> _allIndices;
     for (int i=0;i<meshCnt;i++)
     {
-        _allVertices.push_back(std::vector<float>(allVertices[i],allVertices[i]+verticesSizes[i]));
+        _allVertices.push_back(std::vector<double>(allVertices[i],allVertices[i]+verticesSizes[i]));
         _allIndices.push_back(std::vector<int>(allIndices[i],allIndices[i]+indicesSizes[i]));
     }
     assimpExportMeshes(_allVertices,_allIndices,filename,format,scaling,upVector,options);

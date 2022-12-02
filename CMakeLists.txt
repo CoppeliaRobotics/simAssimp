@@ -55,4 +55,5 @@ set(SOURCES
 )
 
 coppeliasim_add_plugin(simExtAssimp SOURCES ${SOURCES})
+target_compile_definitions(simExtAssimp PRIVATE SIM_MATH_DOUBLE)
 target_link_libraries(simExtAssimp ${ASSIMP_LIBRARIES})
