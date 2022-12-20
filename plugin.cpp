@@ -333,9 +333,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
         else
             shapeHandles.insert(shapeHandles.end(),shapeHandlesForThisFile.begin(),shapeHandlesForThisFile.end());
     }
-    simRemoveObjectFromSelection(sim_handle_all,-1);
-    for (size_t i=0;i<shapeHandles.size();i++)
-        simAddObjectToSelection(sim_handle_single,shapeHandles[i]);
+    simSetObjectSel(shapeHandles.data(),int(shapeHandles.size()));
 }
 
 void importShapes(SScriptCallBack *p, const char *cmd, importShapes_in *in, importShapes_out *out)
@@ -408,7 +406,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
         if ((options&512)!=0)
             tr=firstTrInv*tr;
         int visible;
-        simGetObjectInt32Parameter(h,sim_objintparam_visible,&visible);
+        simGetObjectInt32Param(h,sim_objintparam_visible,&visible);
         if ( ((options&8)==0)||(visible!=0) )
         {
             int compoundIndex=0;
