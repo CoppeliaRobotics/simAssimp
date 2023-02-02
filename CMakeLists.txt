@@ -18,7 +18,7 @@ list(APPEND CMAKE_MODULE_PATH
     ${LIBPLUGIN_DIR}/cmake)
 find_package(CoppeliaSim 4.5.0.0 REQUIRED)
 
-include_directories(${COPPELIASIM_INCLUDE_DIR}/../simMath)
+include_directories(${COPPELIASIM_INCLUDE_DIR}/simMath)
 include_directories(${COPPELIASIM_INCLUDE_DIR}/stack)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/generated)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
@@ -38,20 +38,20 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 
 set(SOURCES
     plugin.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/MyMath.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/3Vector.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/4Vector.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/7Vector.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/3X3Matrix.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/4X4Matrix.cpp
-    ${COPPELIASIM_COMMON_DIR}/../simMath/MMatrix.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackArray.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackBool.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackMap.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackNull.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackNumber.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackObject.cpp
-    ${COPPELIASIM_COMMON_DIR}/stack/stackString.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/MyMath.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/3Vector.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/4Vector.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/7Vector.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/3X3Matrix.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/4X4Matrix.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simMath/MMatrix.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackArray.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackBool.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackMap.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackNull.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackNumber.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackObject.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/stack/stackString.cpp
 )
 
 coppeliasim_add_plugin(simExtAssimp SOURCES ${SOURCES})
