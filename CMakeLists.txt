@@ -45,13 +45,13 @@ set(SOURCES
     ${COPPELIASIM_INCLUDE_DIR}/simMath/3X3Matrix.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simMath/4X4Matrix.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simMath/MMatrix.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackArray.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackBool.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackMap.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackNull.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackNumber.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackObject.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/stack/stackString.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackArray.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackBool.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackMap.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackNull.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackNumber.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackObject.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackString.cpp
 )
 
 coppeliasim_add_plugin(simExtAssimp SOURCES ${SOURCES})

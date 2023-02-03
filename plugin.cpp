@@ -2,9 +2,9 @@
 #include <sstream>
 #include <map>
 #include <vector>
-#include "7Vector.h"
-#include "stackArray.h"
-#include "stackMap.h"
+#include <simMath/7Vector.h>
+#include <simStack/stackArray.h>
+#include <simStack/stackMap.h>
 #include <assimp/Importer.hpp>
 #include <assimp/importerdesc.h>
 #include <assimp/Exporter.hpp>
