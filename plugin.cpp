@@ -40,7 +40,7 @@ void splitString(const std::string& str,char delChar,std::vector<std::string>& w
         words.push_back(itm);
 }
 
-void getImportFormat(SScriptCallBack *p, const char *cmd, getImportFormat_in *in, getImportFormat_out *out)
+SIM_DLLEXPORT void simExtAssimp_getImportFormat(getImportFormat_in *in, getImportFormat_out *out)
 {
     if(in->index < 0) throw std::runtime_error("invalid index");
 
@@ -51,10 +51,10 @@ void getImportFormat(SScriptCallBack *p, const char *cmd, getImportFormat_in *in
         out->formatExtension=importer.GetImporterInfo(in->index)->mFileExtensions;
     }
     else
-        simPopStackItem(p->stackID,simGetStackSize(p->stackID));
+        simPopStackItem(in->_.stackID,simGetStackSize(in->_.stackID));
 }
 
-void getExportFormat(SScriptCallBack *p, const char *cmd, getExportFormat_in *in, getExportFormat_out *out)
+SIM_DLLEXPORT void simExtAssimp_getExportFormat(getExportFormat_in *in, getExportFormat_out *out)
 {
     if(in->index < 0) throw std::runtime_error("invalid index");
 
@@ -66,7 +66,7 @@ void getExportFormat(SScriptCallBack *p, const char *cmd, getExportFormat_in *in
         out->formatId=exporter.GetExportFormatDescription(in->index)->id;
     }
     else
-        simPopStackItem(p->stackID,simGetStackSize(p->stackID));
+        simPopStackItem(in->_.stackID,simGetStackSize(in->_.stackID));
 }
 
 const aiMatrix4x4* getTransform(aiNode* node,const aiMatrix4x4* tr,int meshIndex)
@@ -336,7 +336,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
     simSetObjectSel(shapeHandles.data(),int(shapeHandles.size()));
 }
 
-void importShapes(SScriptCallBack *p, const char *cmd, importShapes_in *in, importShapes_out *out)
+SIM_DLLEXPORT void simExtAssimp_importShapes(importShapes_in *in, importShapes_out *out)
 {
     if(in->maxTextureSize < 8) throw std::runtime_error("invalid maxTextureSize");
     if(in->scaling < 0.0) throw std::runtime_error("invalid scaling");
@@ -389,7 +389,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
     for (size_t shapeI=0;shapeI<shapeHandles.size();shapeI++)
     {
         int h=shapeHandles[shapeI];
-        
+
         if (shapeI==0)
         {
             simGetObjectPosition(h,-1,firstTrInv.X.data);
@@ -629,7 +629,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
 }
 
 
-void exportShapes(SScriptCallBack *p, const char *cmd, exportShapes_in *in, exportShapes_out *out)
+SIM_DLLEXPORT void simExtAssimp_exportShapes(exportShapes_in *in, exportShapes_out *out)
 {
     Assimp::Exporter exp;
     int fi=0;
@@ -778,7 +778,7 @@ void assimpImportMeshes(const char* fileNames,double scaling,int upVector,int op
     }
 }
 
-void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, importMeshes_out *out)
+SIM_DLLEXPORT void simExtAssimp_importMeshes(importMeshes_in *in, importMeshes_out *out)
 {
     if(in->scaling < 0.0) throw std::runtime_error("invalid scaling");
     if(in->upVector < 0) throw std::runtime_error("invalid upVector");
@@ -789,28 +789,28 @@ void importMeshes(SScriptCallBack *p, const char *cmd, importMeshes_in *in, impo
     std::vector<std::vector<int>> allIndices;
     assimpImportMeshes(in->filenames.c_str(),in->scaling,parseVectorUp(in->upVector,0),in->options,allVertices,allIndices);
 
-    simPopStackItem(p->stackID,simGetStackSize(p->stackID));
+    simPopStackItem(in->_.stackID,simGetStackSize(in->_.stackID));
 
-    simPushTableOntoStack(p->stackID);
+    simPushTableOntoStack(in->_.stackID);
     for (size_t i=0;i<allVertices.size();i++)
     {
-        simPushInt32OntoStack(p->stackID,int(i+1));
+        simPushInt32OntoStack(in->_.stackID,int(i+1));
         if (allVertices[i].size()>0)
-            simPushDoubleTableOntoStack(p->stackID,&allVertices[i][0],int(allVertices[i].size()));
+            simPushDoubleTableOntoStack(in->_.stackID,&allVertices[i][0],int(allVertices[i].size()));
         else
-            simPushDoubleTableOntoStack(p->stackID,nullptr,0);
-        simInsertDataIntoStackTable(p->stackID);
+            simPushDoubleTableOntoStack(in->_.stackID,nullptr,0);
+        simInsertDataIntoStackTable(in->_.stackID);
     }
-    
-    simPushTableOntoStack(p->stackID);
+
+    simPushTableOntoStack(in->_.stackID);
     for (size_t i=0;i<allIndices.size();i++)
     {
-        simPushInt32OntoStack(p->stackID,int(i+1));
+        simPushInt32OntoStack(in->_.stackID,int(i+1));
         if (allIndices[i].size()>0)
-            simPushInt32TableOntoStack(p->stackID,&allIndices[i][0],int(allIndices[i].size()));
+            simPushInt32TableOntoStack(in->_.stackID,&allIndices[i][0],int(allIndices[i].size()));
         else
-            simPushInt32TableOntoStack(p->stackID,nullptr,0);
-        simInsertDataIntoStackTable(p->stackID);
+            simPushInt32TableOntoStack(in->_.stackID,nullptr,0);
+        simInsertDataIntoStackTable(in->_.stackID);
     }
 }
 
@@ -875,9 +875,9 @@ void assimpExportMeshes(const std::vector<std::vector<double>>& vertices,const s
 }
 
 #define LUA_EXPORTMESHES_COMMAND "simAssimp.exportMeshes"
-void exportMeshes(SScriptCallBack *p, const char *cmd, exportMeshes_in *in, exportMeshes_out *out)
+SIM_DLLEXPORT void simExtAssimp_exportMeshes(exportMeshes_in *in, exportMeshes_out *out)
 {
-    int stack=p->stackID;
+    int stack=in->_.stackID;
     CStackArray inArguments;
     inArguments.buildFromStack(stack);
 
