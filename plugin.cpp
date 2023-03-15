@@ -203,31 +203,31 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                     indices.push_back(face.mIndices[1]);
                     indices.push_back(face.mIndices[2]);
                 }
-                int h;
-                h=simCreateMeshShape(0,0,&vertices[0],vertices.size(),&indices[0],indices.size(),nullptr);
-                if ((options&64)!=0)
-                    simReorientShapeBoundingBox(h,-1,0);
-
+                
+                // Ok, we have vertices and indices ready. What about a texture?
+                std::vector<float> _textureCoords;
+                float* textureCoords=nullptr; 
+                unsigned char* imgg=nullptr;
+                int imggRes[2];
                 aiString texPath;
                 bool hasTexture=false;
                 if ( ((options&1)==0)&&(mesh->HasTextureCoords(0))&&(aiReturn_SUCCESS==aiGetMaterialTexture(material,aiTextureType_DIFFUSE,0,&texPath)) )
                 {
-                    std::vector<double> textureCoords;
                     for (size_t j=0;j<indices.size();j++)
                     {
                         int index=indices[j];
                         const aiVector3D& textureVect=mesh->mTextureCoords[0][index];
-                        textureCoords.push_back(textureVect.x);
-                        textureCoords.push_back(textureVect.y);
+                        _textureCoords.push_back(float(textureVect.x));
+                        _textureCoords.push_back(float(textureVect.y));
                     }
                     std::string p=std::string(texPath.C_Str());
                     p.erase(0,1);
                     int index=std::stoi(p);
                     const aiTexture* texture=scene->mTextures[index];
-                    if ( (texture!=nullptr)&&(textureCoords.size()>0) )
+                    if ( (texture!=nullptr)&&(_textureCoords.size()>0) )
                     {
-                        int res[2];
                         unsigned char* img=nullptr;
+                        int res[2];
                         bool deleteTexture=true;
                         if (texture->mHeight==0)
                         {
@@ -269,9 +269,19 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                         }
                         hasTexture=true;
                         hasMaterials=true;
-                        simApplyTexture(h,&textureCoords[0],textureCoords.size(),textIt->second.image,textIt->second.imgRes,16);
+                        textureCoords=_textureCoords.data();
+                        imgg=textIt->second.image;
+                        imggRes[0]=textIt->second.imgRes[0];
+                        imggRes[1]=textIt->second.imgRes[1];
+                        //simApplyTexture(h,&textureCoords[0],textureCoords.size(),textIt->second.image,textIt->second.imgRes,16);
                     }
                 }
+                
+                int h=simCreateShape(16,0,&vertices[0],vertices.size(),&indices[0],indices.size(),nullptr,textureCoords,imgg,imggRes);
+                
+                if ((options&64)!=0)
+                    simReorientShapeBoundingBox(h,-1,0);
+
                 aiColor3D colorA(0.499,0.499,0.499);
                 aiColor3D colorD(0.499,0.499,0.499);
                 aiColor3D colorS(0.0,0.0,0.0);
@@ -369,7 +379,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
         double colorS[3];
         double colorE[3];
         int textureId;
-        double* textureCoordinates;
+        float* textureCoordinates;
     };
     struct STexture
     {
@@ -593,10 +603,10 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
             {
                 int* tri=allShapeComponents[shapeCompI].indices;
                 int index[3]={tri[3*i+0],tri[3*i+1],tri[3*i+2]};
-                double* tCoords=allShapeComponents[shapeCompI].textureCoordinates;
-                pMesh->mTextureCoords[0][index[0]]=aiVector3D(tCoords[6*i+0],tCoords[6*i+1],0.0);
-                pMesh->mTextureCoords[0][index[1]]=aiVector3D(tCoords[6*i+2],tCoords[6*i+3],0.0);
-                pMesh->mTextureCoords[0][index[2]]=aiVector3D(tCoords[6*i+4],tCoords[6*i+5],0.0);
+                float* tCoords=allShapeComponents[shapeCompI].textureCoordinates;
+                pMesh->mTextureCoords[0][index[0]]=aiVector3D((double)tCoords[6*i+0],(double)tCoords[6*i+1],0.0);
+                pMesh->mTextureCoords[0][index[1]]=aiVector3D((double)tCoords[6*i+2],(double)tCoords[6*i+3],0.0);
+                pMesh->mTextureCoords[0][index[2]]=aiVector3D((double)tCoords[6*i+4],(double)tCoords[6*i+5],0.0);
             }
             std::map<int,STexture>::iterator textIt=allTextures.find(allShapeComponents[shapeCompI].textureId);
             if (textIt!=allTextures.end())
