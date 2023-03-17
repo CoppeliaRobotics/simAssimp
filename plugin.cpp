@@ -280,7 +280,10 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                 int h=simCreateShape(16,0,&vertices[0],vertices.size(),&indices[0],indices.size(),nullptr,textureCoords,imgg,imggRes);
                 
                 if ((options&64)!=0)
-                    simReorientShapeBoundingBox(h,-1,0);
+                {
+                    double ident[7]={0.0,0.0,0.0,0.0,0.0,0.0,1.0};
+                    simAlignShapeBB(h,ident);
+                }
 
                 aiColor3D colorA(0.499,0.499,0.499);
                 aiColor3D colorD(0.499,0.499,0.499);
