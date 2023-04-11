@@ -93,6 +93,14 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
     splitString(fileNames,';',filenames);
     for (size_t wi=0;wi<filenames.size();wi++)
     {
+        std::string shapeAlias(filenames[wi]);
+        std::size_t si=shapeAlias.find_last_of("/\\");
+        if (si!=std::string::npos)
+            shapeAlias=shapeAlias.substr(si+1);
+        si=shapeAlias.find_last_of(".");
+        if (si!=std::string::npos)
+            shapeAlias=shapeAlias.substr(0,si);
+        
         if ((options&256)==0)
         {
             std::string txt("importing ");
@@ -278,6 +286,13 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                 }
                 
                 int h=simCreateShape(16,0,&vertices[0],vertices.size(),&indices[0],indices.size(),nullptr,textureCoords,imgg,imggRes);
+                std::string sha(shapeAlias);
+                if (scene->mNumMeshes>1)
+                {
+                    sha+="_";
+                    sha+=std::to_string(i);
+                }
+                simSetObjectAlias(h,sha.c_str(),0);
                 
                 if ((options&64)!=0)
                 {
