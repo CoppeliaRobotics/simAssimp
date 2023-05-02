@@ -2,6 +2,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <filesystem>
 #include <simMath/7Vector.h>
 #include <simStack/stackArray.h>
 #include <simStack/stackMap.h>
@@ -229,59 +230,108 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                         _textureCoords.push_back(float(textureVect.y));
                     }
                     std::string p=std::string(texPath.C_Str());
-                    p.erase(0,1);
-                    int index=std::stoi(p);
-                    const aiTexture* texture=scene->mTextures[index];
-                    if ( (texture!=nullptr)&&(_textureCoords.size()>0) )
+                    const aiTexture* texture=nullptr;
+                    int index=-1;
+                    if ( (p.size()>1)&&(p[0]=='*') )
                     {
-                        unsigned char* img=nullptr;
-                        int res[2];
-                        bool deleteTexture=true;
-                        if (texture->mHeight==0)
+                        p.erase(0,1);
+                        index=std::stoi(p);
+                        texture=scene->mTextures[index];
+                    }
+                    if (_textureCoords.size()>0)
+                    {
+                        if (texture!=nullptr)
                         {
-                            int l=(int)texture->mWidth;
-                            img=(unsigned char*)simLoadImage(res,1,(char*)texture->pcData,(int*)(&l));
-                        }
-                        else
-                        {
-                            img=(unsigned char*)texture->pcData;
-                            res[0]=texture->mWidth;
-                            res[1]=texture->mHeight;
-                            deleteTexture=false;
-                        }
-                        std::map<int,STexture>::iterator textIt=allTransformedTextures.find(index);
-                        if (textIt!=allTransformedTextures.end())
-                        {
-                            if (deleteTexture)
-                                simReleaseBuffer((char*)img);
-                        }
-                        else
-                        {
-                            if ( (res[0]>maxTextures)||(res[1]>maxTextures) )
+                            unsigned char* img=nullptr;
+                            int res[2];
+                            bool deleteTexture=true;
+                            if (texture->mHeight==0)
                             {
-                                int resOut[2]={std::min<int>(maxTextures,res[0]),std::min<int>(maxTextures,res[1])};
-                                unsigned char* imgOut=simGetScaledImage(img,res,resOut,1+2,NULL);
+                                int l=(int)texture->mWidth;
+                                img=(unsigned char*)simLoadImage(res,1,(char*)texture->pcData,(int*)(&l));
+                            }
+                            else
+                            {
+                                img=(unsigned char*)texture->pcData;
+                                res[0]=texture->mWidth;
+                                res[1]=texture->mHeight;
+                                deleteTexture=false;
+                            }
+                            std::map<int,STexture>::iterator textIt=allTransformedTextures.find(index);
+                            if (textIt!=allTransformedTextures.end())
+                            {
                                 if (deleteTexture)
                                     simReleaseBuffer((char*)img);
-                                img=imgOut;
-                                res[0]=resOut[0];
-                                res[1]=resOut[1];
                             }
-                            STexture im;
-                            im.imgRes[0]=res[0];
-                            im.imgRes[1]=res[1];
-                            im.releaseBuffer=deleteTexture;
-                            im.image=img;
-                            allTransformedTextures[index]=im;
-                            textIt=allTransformedTextures.find(index);
+                            else
+                            {
+                                if ( (res[0]>maxTextures)||(res[1]>maxTextures) )
+                                {
+                                    int resOut[2]={std::min<int>(maxTextures,res[0]),std::min<int>(maxTextures,res[1])};
+                                    unsigned char* imgOut=simGetScaledImage(img,res,resOut,1+2,NULL);
+                                    if (deleteTexture)
+                                        simReleaseBuffer((char*)img);
+                                    img=imgOut;
+                                    res[0]=resOut[0];
+                                    res[1]=resOut[1];
+                                }
+                                STexture im;
+                                im.imgRes[0]=res[0];
+                                im.imgRes[1]=res[1];
+                                im.releaseBuffer=deleteTexture;
+                                im.image=img;
+                                allTransformedTextures[index]=im;
+                                textIt=allTransformedTextures.find(index);
+                            }
+                            hasTexture=true;
+                            hasMaterials=true;
+                            textureCoords=_textureCoords.data();
+                            imgg=textIt->second.image;
+                            imggRes[0]=textIt->second.imgRes[0];
+                            imggRes[1]=textIt->second.imgRes[1];
+                            //simApplyTexture(h,&textureCoords[0],textureCoords.size(),textIt->second.image,textIt->second.imgRes,16);
                         }
-                        hasTexture=true;
-                        hasMaterials=true;
-                        textureCoords=_textureCoords.data();
-                        imgg=textIt->second.image;
-                        imggRes[0]=textIt->second.imgRes[0];
-                        imggRes[1]=textIt->second.imgRes[1];
-                        //simApplyTexture(h,&textureCoords[0],textureCoords.size(),textIt->second.image,textIt->second.imgRes,16);
+                        else
+                        {
+                            std::filesystem::path pp(filenames[wi]);
+                            pp=pp.parent_path();
+                            std::string loc[5]={pp.string()+"/"+p,pp.string()+"/../"+p,pp.string()+"/../textures/"+p,pp.string()+"/../materials/"+p,pp.string()+"/../materials/textures/"+p};
+                            std::string fn;
+                            for (size_t fi=0;fi<5;fi++)
+                            {
+                                if (simDoesFileExist(loc[fi].c_str())==1)
+                                    fn=loc[fi];
+                            }
+                                printf("Final File: %s\n",fn.c_str());
+                            if (fn.size()>0)
+                            {
+                                int res[2];
+                                unsigned char* img=(unsigned char*)simLoadImage(res,1,fn.c_str(),nullptr);
+                                if ( (res[0]>maxTextures)||(res[1]>maxTextures) )
+                                {
+                                    int resOut[2]={std::min<int>(maxTextures,res[0]),std::min<int>(maxTextures,res[1])};
+                                    unsigned char* imgOut=simGetScaledImage(img,res,resOut,1+2,NULL);
+                                    simReleaseBuffer((char*)img);
+                                    img=imgOut;
+                                    res[0]=resOut[0];
+                                    res[1]=resOut[1];
+                                }
+                                STexture im;
+                                im.imgRes[0]=res[0];
+                                im.imgRes[1]=res[1];
+                                im.releaseBuffer=true;
+                                im.image=img;
+                                allTransformedTextures[0]=im; // only one texture with textures with specfic name?
+                                std::map<int,STexture>::iterator textIt=allTransformedTextures.find(0);
+                                hasTexture=true;
+                                hasMaterials=true;
+                                textureCoords=_textureCoords.data();
+                                imgg=textIt->second.image;
+                                imggRes[0]=textIt->second.imgRes[0];
+                                imggRes[1]=textIt->second.imgRes[1];
+                                //simApplyTexture(h,&textureCoords[0],textureCoords.size(),textIt->second.image,textIt->second.imgRes,16);
+                            }
+                        }
                     }
                 }
                 
