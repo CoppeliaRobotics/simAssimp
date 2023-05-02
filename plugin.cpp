@@ -295,9 +295,9 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                         {
                             std::filesystem::path pp(filenames[wi]);
                             pp=pp.parent_path();
-                            std::string loc[5]={pp.string()+"/"+p,pp.string()+"/../"+p,pp.string()+"/../textures/"+p,pp.string()+"/../materials/"+p,pp.string()+"/../materials/textures/"+p};
+                            std::string loc[6]={pp.string()+"/"+p,pp.string()+"/textures/"+p,pp.string()+"/../"+p,pp.string()+"/../textures/"+p,pp.string()+"/../materials/"+p,pp.string()+"/../materials/textures/"+p};
                             std::string fn;
-                            for (size_t fi=0;fi<5;fi++)
+                            for (size_t fi=0;fi<6;fi++)
                             {
                                 if (simDoesFileExist(loc[fi].c_str())==1)
                                     fn=loc[fi];
