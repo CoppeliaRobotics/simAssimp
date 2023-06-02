@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
-project(simExtAssimp)
+project(simAssimp)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MACOSX_RPATH 1)
@@ -54,6 +54,6 @@ set(SOURCES
     ${COPPELIASIM_INCLUDE_DIR}/simStack/stackString.cpp
 )
 
-coppeliasim_add_plugin(simExtAssimp SOURCES ${SOURCES})
-target_compile_definitions(simExtAssimp PRIVATE SIM_MATH_DOUBLE)
-target_link_libraries(simExtAssimp ${ASSIMP_LIBRARIES})
+coppeliasim_add_plugin(simAssimp SOURCES ${SOURCES})
+target_compile_definitions(simAssimp PRIVATE SIM_MATH_DOUBLE)
+target_link_libraries(simAssimp ${ASSIMP_LIBRARIES})

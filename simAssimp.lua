@@ -1,4 +1,4 @@
-local simAssimp={}
+local simAssimp=loadPlugin('simAssimp')
 
 --@fun importShapesDlg Offers import parameters via dialog, before calling simAssimp.import
 --@arg string filename The filename (including extension) of the CAD data
@@ -303,5 +303,7 @@ function simAssimp.exportShapesDlg(...)
     simUI.setCheckboxValue(configUiData.dlg,8,configUiData.relativeCoords and 2 or 0)
     configUiData.updateUpVectorCombobox()
 end
+
+(require'simAssimp-typecheck')(simAssimp)
 
 return simAssimp
