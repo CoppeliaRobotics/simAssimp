@@ -1,4 +1,4 @@
-local simAssimp=loadPlugin('simAssimp')
+local simAssimp=loadPlugin'simAssimp';
 
 --@fun importShapesDlg Offers import parameters via dialog, before calling simAssimp.import
 --@arg string filename The filename (including extension) of the CAD data
