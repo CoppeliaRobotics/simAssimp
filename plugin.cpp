@@ -41,7 +41,7 @@ void splitString(const std::string& str,char delChar,std::vector<std::string>& w
         words.push_back(itm);
 }
 
-SIM_DLLEXPORT void simExtAssimp_getImportFormat(getImportFormat_in *in, getImportFormat_out *out)
+SIM_DLLEXPORT void simAssimp_getImportFormat(getImportFormat_in *in, getImportFormat_out *out)
 {
     if(in->index < 0) throw std::runtime_error("invalid index");
 
@@ -55,7 +55,7 @@ SIM_DLLEXPORT void simExtAssimp_getImportFormat(getImportFormat_in *in, getImpor
         simPopStackItem(in->_.stackID,simGetStackSize(in->_.stackID));
 }
 
-SIM_DLLEXPORT void simExtAssimp_getExportFormat(getExportFormat_in *in, getExportFormat_out *out)
+SIM_DLLEXPORT void simAssimp_getExportFormat(getExportFormat_in *in, getExportFormat_out *out)
 {
     if(in->index < 0) throw std::runtime_error("invalid index");
 
@@ -414,7 +414,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
     simSetObjectSel(shapeHandles.data(),int(shapeHandles.size()));
 }
 
-SIM_DLLEXPORT void simExtAssimp_importShapes(importShapes_in *in, importShapes_out *out)
+SIM_DLLEXPORT void simAssimp_importShapes(importShapes_in *in, importShapes_out *out)
 {
     if(in->maxTextureSize < 8) throw std::runtime_error("invalid maxTextureSize");
     if(in->scaling < 0.0) throw std::runtime_error("invalid scaling");
@@ -707,7 +707,7 @@ void assimpExportShapes(const std::vector<int>& shapeHandles,const char* filenam
 }
 
 
-SIM_DLLEXPORT void simExtAssimp_exportShapes(exportShapes_in *in, exportShapes_out *out)
+SIM_DLLEXPORT void simAssimp_exportShapes(exportShapes_in *in, exportShapes_out *out)
 {
     Assimp::Exporter exp;
     int fi=0;
@@ -856,7 +856,7 @@ void assimpImportMeshes(const char* fileNames,double scaling,int upVector,int op
     }
 }
 
-SIM_DLLEXPORT void simExtAssimp_importMeshes(importMeshes_in *in, importMeshes_out *out)
+SIM_DLLEXPORT void simAssimp_importMeshes(importMeshes_in *in, importMeshes_out *out)
 {
     if(in->scaling < 0.0) throw std::runtime_error("invalid scaling");
     if(in->upVector < 0) throw std::runtime_error("invalid upVector");
@@ -953,7 +953,7 @@ void assimpExportMeshes(const std::vector<std::vector<double>>& vertices,const s
 }
 
 #define LUA_EXPORTMESHES_COMMAND "simAssimp.exportMeshes"
-SIM_DLLEXPORT void simExtAssimp_exportMeshes(exportMeshes_in *in, exportMeshes_out *out)
+SIM_DLLEXPORT void simAssimp_exportMeshes(exportMeshes_in *in, exportMeshes_out *out)
 {
     int stack=in->_.stackID;
     CStackArray inArguments;
