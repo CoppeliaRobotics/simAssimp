@@ -22,11 +22,11 @@ int parseVectorUp(int vu, int def)
 {
     switch(vu)
     {
-    case sim_assimp_upvect_auto:
+    case simassimp_upvect_auto:
         return 0;
-    case sim_assimp_upvect_z:
+    case simassimp_upvect_z:
         return 1;
-    case sim_assimp_upvect_y:
+    case simassimp_upvect_y:
         return 2;
     default:
         return def;
@@ -1129,4 +1129,4 @@ public:
     }
 };
 
-SIM_PLUGIN(PLUGIN_NAME, PLUGIN_VERSION, Plugin)
+SIM_PLUGIN(Plugin)

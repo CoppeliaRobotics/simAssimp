@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <?xml-stylesheet type="text/xsl" href="callbacks.xsl"?>
 
-<plugin name="Assimp" author="marc@coppeliarobotics.com">
+<plugin name="simAssimp" author="marc@coppeliarobotics.com">
 
     <description>Plugin for importing CAD files</description>
 
@@ -29,7 +29,7 @@
             <param name="scaling" type="double" item-type="double" default="0.0">
                 <description>The desired mesh scaling. 0.0 for automatic scaling</description>
             </param>
-            <param name="upVector" type="int" default="sim_assimp_upvect_auto">
+            <param name="upVector" type="int" default="simassimp_upvect_auto">
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0">
@@ -58,7 +58,7 @@
             <param name="scaling" type="double" item-type="double" default="1.0">
                 <description>The desired mesh scaling.</description>
             </param>
-            <param name="upVector" type="int" default="sim_assimp_upvect_z">
+            <param name="upVector" type="int" default="simassimp_upvect_z">
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0">
@@ -113,7 +113,7 @@
             <param name="scaling" type="double" item-type="double" default="0.0">
                 <description>The desired mesh scaling. 0.0 for automatic scaling</description>
             </param>
-            <param name="upVector" type="int" default="sim_assimp_upvect_auto">
+            <param name="upVector" type="int" default="simassimp_upvect_auto">
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0">
@@ -148,7 +148,7 @@
             <param name="scaling" type="double" item-type="double" default="1.0" skip="true">
                 <description>The desired mesh scaling.</description>
             </param>
-            <param name="upVector" type="int" default="sim_assimp_upvect_z" skip="true">
+            <param name="upVector" type="int" default="simassimp_upvect_z" skip="true">
                 <description>The desired up-vector (see <enum-ref name="upVector" />)</description>
             </param>
             <param name="options" type="int" default="0" skip="true">
