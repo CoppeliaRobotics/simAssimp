@@ -5,7 +5,7 @@ local simAssimp=loadPlugin'simAssimp';
 --@ret table.int handles The handles of the imported shapes
 function simAssimp.importShapesDlg(...)
     local filenames=checkargs({{type='string'}},...)
-    simUI=loadPlugin'simUI'
+    simUI=require'simUI'
     
     configUiData={}
     function configUiData.onImport(ui,id,newVal)
@@ -184,7 +184,7 @@ end
 --@arg table.int shapeHandles The handles of the shapes to export
 function simAssimp.exportShapesDlg(...)
     local filename,shapeHandles=checkargs({{type='string'},{type='table',size='1..*',item_type='int'}},...)
-    simUI=loadPlugin'simUI'
+    simUI=require'simUI'
     
     configUiData={}
     function configUiData.onExport(ui,id,newVal)
