@@ -27,10 +27,14 @@ function simAssimp.importShapesDlg(...)
         if configUiData.generateOneShape then options=options+32 end
         if configUiData.alignedOrientations then options=options+64 end
         if configUiData.ignoreFileformatUp then options=options+128 end
-        simAssimp.importShapes(configUiData.filenames,configUiData.maxRes,scaling,configUiData.upVector,options)
+        local res=pcall(simAssimp.importShapes,configUiData.filenames,configUiData.maxRes,scaling,configUiData.upVector,options)
         configUiData=nil
         simUI.destroy(waitUi)
-        print("done.")
+        if res then
+            sim.addLog(sim.verbosity_scriptinfos, "imported mesh(es).")
+        else
+            sim.addLog(sim.verbosity_scripterrors, "error while importing mesh(es).")
+        end
         sim.announceSceneContentChange()
     end
 
@@ -210,12 +214,16 @@ function simAssimp.exportShapesDlg(...)
             if configUiData.dropNormals then options=options+4 end
             if configUiData.onlyVisible then options=options+8 end
             if configUiData.relativeCoords then options=options+512 end
-            simAssimp.exportShapes(shapeHandles,filename,fformat,scaling,configUiData.upVector+1,options)
+            local res=pcall(simAssimp.exportShapes,shapeHandles,filename,fformat,scaling,configUiData.upVector+1,options)
             configUiData=nil
             simUI.destroy(waitUi)
-            print("done.")
+            if res then
+                sim.addLog(sim.verbosity_scriptinfos, "exported shape(s).")
+            else
+                sim.addLog(sim.verbosity_scripterrors, "error while exporting shape(s).")
+            end
         else
-            print("simAssimp.exportShapesDlg: Unsupported file format.")
+            sim.addLog(sim.verbosity_scripterrors, "unsupported file format.")
         end
         sim.removeObjectFromSelection(sim.handle_all,-1)
     end
