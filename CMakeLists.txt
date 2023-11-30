@@ -29,15 +29,15 @@ if(APPLE)
     link_directories(/usr/local/lib)
 endif()
 
-coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/simAssimp.lua)
+coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/sourceCode/callbacks.xml LUA_FILE ${CMAKE_CURRENT_SOURCE_DIR}/lua/simAssimp.lua)
 
 set(CMAKE_REQUIRED_INCLUDES ${ASSIMP_INCLUDE_DIRS})
 set(CMAKE_REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sourceCode/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 set(SOURCES
-    plugin.cpp
+    sourceCode/plugin.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simMath/mathFuncs.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simMath/3Vector.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simMath/4Vector.cpp
