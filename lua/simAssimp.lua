@@ -232,7 +232,7 @@ function simAssimp.exportShapesDlg(...)
         else
             sim.addLog(sim.verbosity_scripterrors, "unsupported file format.")
         end
-        sim.removeObjectFromSelection(sim.handle_all, -1)
+        sim.setObjectSel({})
     end
 
     function configUiData.onScalingChanged(ui, id, newVal)
