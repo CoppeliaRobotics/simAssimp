@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.18)
 project(simAssimp)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -56,4 +56,4 @@ set(SOURCES
 
 coppeliasim_add_plugin(simAssimp SOURCES ${SOURCES})
 target_compile_definitions(simAssimp PRIVATE SIM_MATH_DOUBLE)
-target_link_libraries(simAssimp ${ASSIMP_LIBRARIES})
+target_link_libraries(simAssimp PRIVATE ${ASSIMP_LIBRARIES})
