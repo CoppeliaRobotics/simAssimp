@@ -1,11 +1,12 @@
-local simAssimp = loadPlugin 'simAssimp';
+local simAssimp = loadPlugin 'simAssimp'
+local sim = require 'sim-2'
+local simUI = require 'simUI'
 
 -- @fun importShapesDlg Offers import parameters via dialog, before calling simAssimp.import
 -- @arg string filename The filename (including extension) of the CAD data
 -- @ret table.int handles The handles of the imported shapes
 function simAssimp.importShapesDlg(...)
     local filenames = checkargs({{type = 'string'}}, ...)
-    simUI = require 'simUI'
 
     configUiData = {}
     function configUiData.onImport(ui, id, newVal)
@@ -192,7 +193,6 @@ function simAssimp.exportShapesDlg(...)
     local filename, shapeHandles = checkargs({
         {type = 'string'}, {type = 'table', size = '1..*', item_type = 'int'},
     }, ...)
-    simUI = require 'simUI'
 
     configUiData = {}
     function configUiData.onExport(ui, id, newVal)
