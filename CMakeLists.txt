@@ -16,7 +16,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
     ${COPPELIASIM_INCLUDE_DIR}/cmake)
-find_package(CoppeliaSim 4.5.1.7 REQUIRED)
+find_package(CoppeliaSim 4.5.1.7 REQUIRED COMPONENTS simLib-1 simPlusPlus-1 simMath-1 simStack-1)
 
 include_directories(${COPPELIASIM_INCLUDE_DIR}/simMath)
 include_directories(${COPPELIASIM_INCLUDE_DIR}/stack)
@@ -36,24 +36,6 @@ set(CMAKE_REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sourceCode/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-set(SOURCES
-    sourceCode/plugin.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/mathFuncs.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/3Vector.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/4Vector.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/7Vector.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/3X3Matrix.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/4X4Matrix.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simMath/mXnMatrix.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackArray.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackBool.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackMap.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackNull.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackNumber.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackObject.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simStack/stackString.cpp
-)
-
-coppeliasim_add_plugin(simAssimp SOURCES ${SOURCES})
+coppeliasim_add_plugin(simAssimp SOURCES sourceCode/plugin.cpp)
 target_compile_definitions(simAssimp PRIVATE SIM_MATH_DOUBLE)
 target_link_libraries(simAssimp PRIVATE ${ASSIMP_LIBRARIES})
