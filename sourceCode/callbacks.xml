@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <?xml-stylesheet type="text/xsl" href="callbacks.xsl"?>
 
-<plugin name="simAssimp" author="marc@coppeliarobotics.com">
+<plugin name="simAssimp" info="Assimp-based CAD Import Plugin" author="marc@coppeliarobotics.com">
 
     <description>Plugin for importing CAD files</description>
 
@@ -103,7 +103,7 @@
             </param>
         </return>
     </command>
-    
+
     <command name="importMeshes">
         <description>Imports the specified files as mesh data</description>
         <params>
@@ -157,5 +157,5 @@
         </params>
     </command>
 
-    
+
 </plugin>

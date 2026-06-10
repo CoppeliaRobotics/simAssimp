@@ -101,7 +101,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
         si=shapeAlias.find_last_of(".");
         if (si!=std::string::npos)
             shapeAlias=shapeAlias.substr(0,si);
-        
+
         if ((options&256)==0)
         {
             std::string txt("importing ");
@@ -212,10 +212,10 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                     indices.push_back(face.mIndices[1]);
                     indices.push_back(face.mIndices[2]);
                 }
-                
+
                 // Ok, we have vertices and indices ready. What about a texture?
                 std::vector<float> _textureCoords;
-                float* textureCoords=nullptr; 
+                float* textureCoords=nullptr;
                 unsigned char* imgg=nullptr;
                 int imggRes[2];
                 aiString texPath;
@@ -334,7 +334,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                         }
                     }
                 }
-                
+
                 int h=simCreateShape(16,0,&vertices[0],vertices.size(),&indices[0],indices.size(),nullptr,textureCoords,imgg,imggRes);
                 std::string sha(shapeAlias);
                 if (scene->mNumMeshes>1)
@@ -343,7 +343,7 @@ void assimpImportShapes(const char* fileNames,int maxTextures,double scaling,int
                     sha+=std::to_string(i);
                 }
                 simSetObjectAlias(h,sha.c_str(),0);
-                
+
                 if ((options&64)!=0)
                 {
                     double ident[7]={0.0,0.0,0.0,0.0,0.0,0.0,1.0};
@@ -1123,9 +1123,6 @@ public:
     {
         if(!registerScriptStuff())
             throw std::runtime_error("failed to register script stuff");
-
-        setExtVersion("Assimp-based CAD Import Plugin");
-        setBuildDate(BUILD_DATE);
     }
 };
 
